@@ -11,3 +11,5 @@ out/
 **/node_modules
 
 **/.tanstack
+
+**/*.env
