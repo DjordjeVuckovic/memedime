@@ -1,0 +1,19 @@
+{
+  "name": "aixmeme",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:all": "bun --filter '*' dev",
+    "dev:api": "bun --filter api dev",
+    "dev:ui": "bun --filter ui dev"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

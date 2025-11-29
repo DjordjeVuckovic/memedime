@@ -1,0 +1,13 @@
+# User-specific stuff
+**/.idea
+
+# File-based project format
+*.iws
+*.iml
+
+# IntelliJ
+out/
+
+**/node_modules
+
+**/.tanstack
