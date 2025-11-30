@@ -6,7 +6,16 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@ai-sdk/groq": "^2.0.32",
+    "@ai-sdk/openai": "^2.0.74",
+    "@ai-sdk/xai": "^2.0.39",
+    "@elysiajs/openapi": "^1.4.11",
+    "@openrouter/ai-sdk-provider": "^1.2.8",
+    "add": "^2.0.6",
+    "ai": "^5.0.104",
+    "drizzle-orm": "^0.44.7",
+    "elysia": "latest",
+    "ollama-ai-provider-v2": "^1.5.5"
   },
   "devDependencies": {
     "bun-types": "latest",
