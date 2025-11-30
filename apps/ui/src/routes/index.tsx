@@ -8,9 +8,9 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Zap, Rocket, TrendingUp } from 'lucide-react'
-import slotImage from '@/assets/imgs/slot.png'
 import { ConnectIcon } from '@/components/ConnectIcon'
 import { CoinTicker } from '@/components/CoinTicker'
+import { RobotIcon } from '@/components/RobotIcon'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -34,13 +34,7 @@ function HomePage() {
           <div className="text-center space-y-8">
             {/* Main Title */}
             <div className="space-y-6 animate-slide-up">
-              <div className="animate-float">
-                <img
-                  src={slotImage}
-                  alt="MemeDime Slot Machine"
-                  className="w-40 sm:w-56 md:w-72 lg:w-96 mx-auto drop-shadow-2xl"
-                />
-              </div>
+              <RobotIcon />
               <h1 className="text-6xl sm:text-7xl md:text-8xl font-black tracking-tight">
                 <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent inline-block animate-pulse-grow">
                   MEMEDIME
@@ -62,7 +56,7 @@ function HomePage() {
             <div className="space-y-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
               <div className="flex items-center justify-center gap-3 text-xl sm:text-2xl text-yellow-400 font-bold">
                 <Zap className="w-6 h-6 animate-pulse" />
-                <span className="font-mono">$0.10 PER SPIN</span>
+                <span className="font-mono">$0.10 PER GEN</span>
                 <Zap className="w-6 h-6 animate-pulse" />
               </div>
               <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto font-medium">
@@ -74,9 +68,9 @@ function HomePage() {
             {/* CTA Button */}
             <div className="pt-8 animate-slide-up" style={{ animationDelay: '400ms' }}>
               <Button variant="gold" size="xl" glow className="hover-shake" asChild>
-                <Link to="/spin">
+                <Link to="/generate">
                   <ConnectIcon />
-                  CONNECT & SPIN
+                  CONNECT & GEN
                 </Link>
               </Button>
             </div>
@@ -126,11 +120,11 @@ function HomePage() {
             <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '100ms', boxShadow: '6px 6px 0px rgb(34 211 238)' }}>
               <CardHeader>
                 <div className="text-6xl font-black text-cyan-400 mb-3">02</div>
-                <CardTitle className="text-xl">PULL LEVER</CardTitle>
+                <CardTitle className="text-xl">GENERATE</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Drop $0.10 USDC. Watch the magic happen.
+                  Drop $0.10 USDC. AI creates your coin.
                 </CardDescription>
               </CardContent>
             </Card>

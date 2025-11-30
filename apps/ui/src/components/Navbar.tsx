@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Button } from './ui/button'
 import { cn } from '@/lib/utils'
 import { ConnectIcon } from './ConnectIcon'
+import solLogo from '@/assets/imgs/sol-logo.svg'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -14,8 +15,42 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="text-3xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
-              🎰
+            <div className="w-10 h-10 transition-all duration-300 group-hover:scale-110">
+              <svg
+                viewBox="0 0 240 200"
+                className="w-full h-full"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="navPurpleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="rgb(168, 85, 247)" />
+                    <stop offset="100%" stopColor="rgb(126, 34, 206)" />
+                  </linearGradient>
+                </defs>
+
+                {/* Antenna */}
+                <line x1="120" y1="25" x2="120" y2="50" stroke="black" strokeWidth="5" strokeLinecap="round" />
+                <circle cx="120" cy="18" r="12" fill="black" stroke="black" strokeWidth="4" />
+                <image href={solLogo} x="108" y="6" width="24" height="24" />
+
+                {/* Robot Head */}
+                <rect x="40" y="50" width="160" height="120" rx="12" fill="url(#navPurpleGrad)" stroke="black" strokeWidth="5" />
+                <rect x="50" y="60" width="140" height="15" rx="4" fill="rgb(126, 34, 206)" stroke="black" strokeWidth="3" />
+
+                {/* Left Solana Eye */}
+                <circle cx="85" cy="110" r="24" fill="black" stroke="black" strokeWidth="4" />
+                <image href={solLogo} x="65" y="90" width="40" height="40" />
+
+                {/* Right Solana Eye */}
+                <circle cx="155" cy="110" r="24" fill="black" stroke="black" strokeWidth="4" />
+                <image href={solLogo} x="135" y="90" width="40" height="40" />
+
+                {/* Mouth */}
+                <rect x="80" y="145" width="80" height="12" rx="6" fill="rgb(34, 211, 238)" stroke="black" strokeWidth="3" />
+                <line x1="100" y1="145" x2="100" y2="157" stroke="black" strokeWidth="2" />
+                <line x1="120" y1="145" x2="120" y2="157" stroke="black" strokeWidth="2" />
+                <line x1="140" y1="145" x2="140" y2="157" stroke="black" strokeWidth="2" />
+              </svg>
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent transition-all group-hover:tracking-wider">

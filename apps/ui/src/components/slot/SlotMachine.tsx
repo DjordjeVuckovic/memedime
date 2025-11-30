@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useState, forwardRef, useImperativeHandle } from 'react'
 import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
 import { ANIMALS, FOODS, VIBES, type EmojiData } from './emoji-data'
 
 interface SlotReelProps {
@@ -69,7 +68,12 @@ interface SlotMachineProps {
   onSpin?: (result: { animal: EmojiData; food: EmojiData; vibe: EmojiData }) => void
 }
 
-export function SlotMachine({ onSpin }: SlotMachineProps) {
+export interface SlotMachineRef {
+  spin: () => void
+  isSpinning: boolean
+}
+
+export const SlotMachine = forwardRef<SlotMachineRef, SlotMachineProps>(({ onSpin }, ref) => {
   const [isSpinning, setIsSpinning] = useState(false)
   const [results, setResults] = useState({
     animal: 0,
@@ -102,14 +106,20 @@ export function SlotMachine({ onSpin }: SlotMachineProps) {
           vibe: VIBES[newResults.vibe],
         })
       }
-    }, 2500)
+    }, 2000)
   }
 
+  // Expose spin method and isSpinning state to parent
+  useImperativeHandle(ref, () => ({
+    spin: handleSpin,
+    isSpinning,
+  }))
+
   return (
-    <div className="flex flex-col items-center gap-8">
+    <div className="w-full max-w-3xl mx-auto">
       {/* Slot Reels Container */}
       <div className="bg-black/40 border-4 border-black rounded-lg p-8">
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="flex justify-center gap-4">
           <SlotReel
             emojis={ANIMALS}
             isSpinning={isSpinning}
@@ -130,36 +140,21 @@ export function SlotMachine({ onSpin }: SlotMachineProps) {
           />
         </div>
 
-        {/* Lever Button */}
-        <div className="text-center">
-          <Button
-            variant="gold"
-            size="xl"
-            glow
-            className="hover-shake"
-            onClick={handleSpin}
-            disabled={isSpinning}
+        {/* Result Display - Just the combo */}
+        {!isSpinning && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mt-6"
           >
-            {isSpinning ? 'SPINNING...' : 'PULL LEVER'}
-          </Button>
-        </div>
+            <p className="text-2xl font-black text-white/90 font-mono">
+              {ANIMALS[results.animal].name} + {FOODS[results.food].name} + {VIBES[results.vibe].name}
+            </p>
+          </motion.div>
+        )}
       </div>
-
-      {/* Result Display */}
-      {!isSpinning && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
-          <p className="text-2xl font-black text-white/90 font-mono">
-            {ANIMALS[results.animal].name} + {FOODS[results.food].name} + {VIBES[results.vibe].name}
-          </p>
-          <p className="text-sm text-white/50 font-mono mt-2">
-            Your combo is ready for AI generation!
-          </p>
-        </motion.div>
-      )}
     </div>
   )
-}
+})
+
+SlotMachine.displayName = 'SlotMachine'

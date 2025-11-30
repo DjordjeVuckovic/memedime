@@ -44,6 +44,11 @@ const buttonVariants = cva(
         class: 'glow-purple hover-lift',
       },
       {
+        variant: 'cyan',
+        glow: true,
+        class: 'hover-lift',
+      },
+      {
         variant: 'green',
         glow: true,
         class: 'glow-green hover-lift',
