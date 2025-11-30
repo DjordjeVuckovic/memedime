@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -7,7 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Sparkles, Zap, Rocket, TrendingUp } from 'lucide-react'
+import { Zap, Rocket, TrendingUp } from 'lucide-react'
+import slotImage from '@/assets/imgs/slot.png'
+import { ConnectIcon } from '@/components/ConnectIcon'
+import { CoinTicker } from '@/components/CoinTicker'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -31,8 +34,12 @@ function HomePage() {
           <div className="text-center space-y-8">
             {/* Main Title */}
             <div className="space-y-6 animate-slide-up">
-              <div className="text-8xl sm:text-9xl md:text-[12rem] animate-float">
-                🎰
+              <div className="animate-float">
+                <img
+                  src={slotImage}
+                  alt="MemeDime Slot Machine"
+                  className="w-40 sm:w-56 md:w-72 lg:w-96 mx-auto drop-shadow-2xl"
+                />
               </div>
               <h1 className="text-6xl sm:text-7xl md:text-8xl font-black tracking-tight">
                 <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent inline-block animate-pulse-grow">
@@ -66,10 +73,11 @@ function HomePage() {
 
             {/* CTA Button */}
             <div className="pt-8 animate-slide-up" style={{ animationDelay: '400ms' }}>
-              <Button variant="gold" size="xl" glow className="hover-shake">
-                <Sparkles className="w-6 h-6" />
-                CONNECT & SPIN
-                <Sparkles className="w-6 h-6" />
+              <Button variant="gold" size="xl" glow className="hover-shake" asChild>
+                <Link to="/spin">
+                  <ConnectIcon />
+                  CONNECT & SPIN
+                </Link>
               </Button>
             </div>
 
@@ -80,12 +88,15 @@ function HomePage() {
                 <span className="font-bold">LIVE:</span>
                 <span>247 SPINS</span>
                 <span className="text-white/40">•</span>
-                <span>12 LAUNCHED 🚀</span>
+                <span>12 LAUNCHED</span>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Viral Coins Ticker */}
+      <CoinTicker />
 
       {/* How It Works Section */}
       <section id="how-it-works" className="py-20 px-4 bg-black/30">
@@ -100,9 +111,9 @@ function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card glow glowColor="purple" className="hover-lift">
+            <Card glow glowColor="purple" className="hover-lift" style={{ boxShadow: '6px 6px 0px rgb(251 191 36)' }}>
               <CardHeader>
-                <div className="text-5xl mb-3 animate-float">👛</div>
+                <div className="text-6xl font-black text-yellow-400 mb-3">01</div>
                 <CardTitle className="text-xl">CONNECT</CardTitle>
               </CardHeader>
               <CardContent>
@@ -112,9 +123,9 @@ function HomePage() {
               </CardContent>
             </Card>
 
-            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '100ms' }}>
+            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '100ms', boxShadow: '6px 6px 0px rgb(34 211 238)' }}>
               <CardHeader>
-                <div className="text-5xl mb-3 animate-float" style={{ animationDelay: '500ms' }}>🎰</div>
+                <div className="text-6xl font-black text-cyan-400 mb-3">02</div>
                 <CardTitle className="text-xl">PULL LEVER</CardTitle>
               </CardHeader>
               <CardContent>
@@ -124,9 +135,9 @@ function HomePage() {
               </CardContent>
             </Card>
 
-            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '200ms' }}>
+            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '200ms', boxShadow: '6px 6px 0px rgb(192 132 252)' }}>
               <CardHeader>
-                <div className="text-5xl mb-3 animate-float" style={{ animationDelay: '1000ms' }}>🤖</div>
+                <div className="text-6xl font-black text-purple-400 mb-3">03</div>
                 <CardTitle className="text-xl">AI COOKS</CardTitle>
               </CardHeader>
               <CardContent>
@@ -136,9 +147,9 @@ function HomePage() {
               </CardContent>
             </Card>
 
-            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '300ms' }}>
+            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '300ms', boxShadow: '6px 6px 0px rgb(74 222 128)' }}>
               <CardHeader>
-                <div className="text-5xl mb-3 animate-float" style={{ animationDelay: '1500ms' }}>🚀</div>
+                <div className="text-6xl font-black text-green-400 mb-3">04</div>
                 <CardTitle className="text-xl">SEND IT</CardTitle>
               </CardHeader>
               <CardContent>
