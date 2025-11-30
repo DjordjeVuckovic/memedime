@@ -265,7 +265,7 @@ function GeneratePage() {
             onClick={handleGenerate}
             disabled={isButtonDisabled()}
           >
-            {mode === 'random' && (isSpinning ? 'SPINNING...' : 'PULL LEVER')}
+            {mode === 'random' && (isSpinning ? 'SPINNING...' : 'GENERATE RANDOM COIN')}
             {mode === 'prompt' && 'GENERATE FROM PROMPT'}
             {mode === 'social' && 'GENERATE FROM POST'}
           </Button>

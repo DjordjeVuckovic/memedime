@@ -21,7 +21,13 @@ function SlotReel({ emojis, isSpinning, finalIndex, delay = 0 }: SlotReelProps) 
     : -itemHeight * finalIndex // Stop at final position
 
   return (
-    <div className="w-32 h-40 bg-gradient-to-b from-purple-900/40 to-black/60 border-4 border-black rounded-lg overflow-hidden relative">
+    <div
+      className="w-32 h-40 border-4 border-black rounded-lg overflow-hidden relative"
+      style={{
+        background: 'linear-gradient(to bottom, rgb(88, 28, 135), rgb(49, 16, 76))',
+        boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.5), 6px 6px 12px rgba(0, 0, 0, 0.4)'
+      }}
+    >
       {/* Window mask */}
       <div className="absolute inset-0 pointer-events-none z-10">
         <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-black to-transparent" />
@@ -35,7 +41,7 @@ function SlotReel({ emojis, isSpinning, finalIndex, delay = 0 }: SlotReelProps) 
         animate={{ y: yPosition }}
         transition={{
           duration: isSpinning ? 2 : 0.5,
-          ease: isSpinning ? 'linear' : 'easeOut',
+          ease: isSpinning ? 'linear' : [0.4, 0, 0.2, 1],
           delay: delay,
         }}
       >
@@ -48,7 +54,7 @@ function SlotReel({ emojis, isSpinning, finalIndex, delay = 0 }: SlotReelProps) 
             <span
               className="text-6xl select-none"
               style={{
-                filter: isSpinning ? 'blur(4px)' : 'blur(0px)',
+                filter: isSpinning ? 'blur(6px)' : 'blur(0px)',
                 transition: 'filter 0.3s ease'
               }}
             >
@@ -106,7 +112,7 @@ export const SlotMachine = forwardRef<SlotMachineRef, SlotMachineProps>(({ onSpi
           vibe: VIBES[newResults.vibe],
         })
       }
-    }, 2000)
+    }, 2500)
   }
 
   // Expose spin method and isSpinning state to parent
@@ -118,7 +124,14 @@ export const SlotMachine = forwardRef<SlotMachineRef, SlotMachineProps>(({ onSpi
   return (
     <div className="w-full max-w-3xl mx-auto">
       {/* Slot Reels Container */}
-      <div className="bg-black/40 border-4 border-black rounded-lg p-8">
+      <div className="glass brutal-shadow border-4 border-black rounded-lg p-8">
+        {/* Pull the Lever Label */}
+        <div className="text-center mb-6">
+          <h3 className="text-3xl font-bold text-white uppercase">
+            PULL THE LEVER
+          </h3>
+        </div>
+
         <div className="flex justify-center gap-4">
           <SlotReel
             emojis={ANIMALS}
