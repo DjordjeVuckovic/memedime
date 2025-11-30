@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router'
-import { Wallet, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from './ui/button'
 import { cn } from '@/lib/utils'
+import { ConnectIcon } from './ConnectIcon'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -52,10 +53,10 @@ export default function Navbar() {
           </div>
 
           {/* Connect Wallet Button */}
-          <div className="hidden md:block animate-pulse-grow">
+          <div className="hidden md:block">
             <Button variant="gold" glow size="md" className="hover-shake">
-              <Wallet className="w-4 h-4" />
-              Connect Wallet
+              <ConnectIcon />
+              CONNECT
             </Button>
           </div>
 
@@ -105,8 +106,8 @@ export default function Navbar() {
           </a>
           <div className="pt-2">
             <Button variant="gold" glow className="w-full">
-              <Wallet className="w-4 h-4" />
-              Connect Wallet
+              <ConnectIcon />
+              CONNECT
             </Button>
           </div>
         </div>
