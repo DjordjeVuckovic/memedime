@@ -449,7 +449,7 @@ still being funny and memeable.
   "name": "CAPYBARA PIZZA QUEST",
   "ticker": "$CAPYPIZZA",
   "tagline": "AFK farming with diamond paws",
-  "concept": "The first gaming meme coin where holding is literally AFK farming. Every pizza a capybara eats = XP for your wallet. We're building the most chill P2E game ever: just hold tokens and watch capybaras eat pizza. Diamond hands = max level.",
+  "concept": "The first gaming memecoins coin where holding is literally AFK farming. Every pizza a capybara eats = XP for your wallet. We're building the most chill P2E game ever: just hold tokens and watch capybaras eat pizza. Diamond hands = max level.",
   "supply": "420,690,000,000",
   "tokenomics": {
     "lp_burned": "80%",
@@ -466,7 +466,7 @@ still being funny and memeable.
   "name": "CAPYBARA PIZZA CARTEL",
   "ticker": "$CAPYMAFIA",
   "tagline": "The don of diamond hands",
-  "concept": "We're not asking if you want pizza. We're TELLING you. $CAPYMAFIA is taking over the meme coin game, one slice at a time. Our capybaras don't ask permission - they hold with diamond paws and make others an offer they can't refuse.",
+  "concept": "We're not asking if you want pizza. We're TELLING you. $CAPYMAFIA is taking over the memecoins coin game, one slice at a time. Our capybaras don't ask permission - they hold with diamond paws and make others an offer they can't refuse.",
   "supply": "420,690,000,000",
   "tokenomics": {
     "lp_burned": "80%",
@@ -483,7 +483,7 @@ still being funny and memeable.
   "name": "CAPYBARA'S PIZZA PARTY",
   "ticker": "$HAPPYPIZZA",
   "tagline": "Sharing slices, spreading smiles",
-  "concept": "A feel-good meme coin about friendship and sharing! Our capybara mascot believes in diamond hands AND kind hearts. For every transaction, a small % goes to wildlife conservation. Pizza brings people together - so does $HAPPYPIZZA.",
+  "concept": "A feel-good memecoins coin about friendship and sharing! Our capybara mascot believes in diamond hands AND kind hearts. For every transaction, a small % goes to wildlife conservation. Pizza brings people together - so does $HAPPYPIZZA.",
   "supply": "420,690,000,000",
   "tokenomics": {
     "lp_burned": "80%",
@@ -491,7 +491,7 @@ still being funny and memeable.
     "charity": "2%",
     "community": "15%"
   },
-  "marketing": "Family-friendly meme coin with a mission. We're organizing community pizza parties in every major city. Bring your kids! Bring your grandma! Everyone gets a slice and learns about crypto. No toxic vibes allowed."
+  "marketing": "Family-friendly memecoins coin with a mission. We're organizing community pizza parties in every major city. Bring your kids! Bring your grandma! Everyone gets a slice and learns about crypto. No toxic vibes allowed."
 }
 ```
 

@@ -144,7 +144,7 @@ The app generates meme coin ideas based on a **3-reel slot machine**:
   "name": "CAPYBARA PIZZA QUEST",
   "ticker": "$CAPYPIZZA",
   "tagline": "AFK farming with diamond paws",
-  "concept": "The first gaming meme coin...",
+  "concept": "The first gaming memecoins coin...",
   "supply": "420,690,000,000",
   "tokenomics": {
     "lp_burned": "80%",

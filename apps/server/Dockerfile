@@ -6,18 +6,18 @@ ENV NODE_ENV=production
 
 COPY package.json ./
 COPY bun.lock bun.lock
-COPY apps/api/package.json apps/api/package.json
+COPY apps/server/package.json apps/server/package.json
 
 RUN bun install
 
-COPY apps/api/ ./apps/api/
+COPY apps/server/ ./apps/server/
 
 RUN bun build \
 	--compile \
 	--minify-whitespace \
 	--minify-syntax \
-	--outfile api \
-	apps/api/src/index.ts
+	--outfile server \
+	apps/server/src/index.ts
 
 FROM gcr.io/distroless/base AS final
 
@@ -25,6 +25,6 @@ WORKDIR /src
 
 ENV NODE_ENV=production
 
-COPY --from=builder /src/api api
+COPY --from=builder /src/server server
 
-ENTRYPOINT ["./api"]
+ENTRYPOINT ["./server"]
