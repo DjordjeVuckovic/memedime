@@ -1,4 +1,4 @@
-export const ConnectIcon = ({ className = "w-7 h-7" }: { className?: string }) => {
+export const ConnectIcon = ({ className = "w-7 h-7", connected = false }: { className?: string; connected?: boolean }) => {
   return (
     <div className="inline-flex items-center justify-center">
       <svg
@@ -25,8 +25,14 @@ export const ConnectIcon = ({ className = "w-7 h-7" }: { className?: string }) =
           d="m2 22 3-3"
         />
 
-        {/* Socket (bottom piece) - moves up/right toward plug on hover */}
-        <g className="transition-transform duration-300 group-hover:translate-x-[2px] group-hover:translate-y-[-2px]">
+        {/* Socket (bottom piece) */}
+        <g
+          className={`transition-transform duration-300 ${
+            connected
+              ? 'translate-x-[2px] translate-y-[-2px] group-hover:translate-x-0 group-hover:translate-y-0'
+              : 'group-hover:translate-x-[2px] group-hover:translate-y-[-2px]'
+          }`}
+        >
           <path
             d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"
           />
@@ -34,10 +40,14 @@ export const ConnectIcon = ({ className = "w-7 h-7" }: { className?: string }) =
           <path d="M10.5 16.5 l2.5 -2.5" />
         </g>
 
-        {/* Plug (top piece) - moves down/left toward socket on hover */}
+        {/* Plug (top piece) */}
         <path
           d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"
-          className="transition-transform duration-300 group-hover:translate-x-[-1.5px] group-hover:translate-y-[1.5px]"
+          className={`transition-transform duration-300 ${
+            connected
+              ? 'translate-x-[-1.5px] translate-y-[1.5px] group-hover:translate-x-0 group-hover:translate-y-0'
+              : 'group-hover:translate-x-[-1.5px] group-hover:translate-y-[1.5px]'
+          }`}
         />
       </svg>
     </div>

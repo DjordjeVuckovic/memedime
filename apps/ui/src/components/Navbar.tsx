@@ -1,13 +1,30 @@
 import { Link } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from './ui/button'
 import { cn } from '@/lib/utils'
 import { ConnectIcon } from './ConnectIcon'
+import { WalletModal } from '@/wallet'
 import solLogo from '@/assets/imgs/sol-logo.svg'
+import { WalletConnectButton } from '@/wallet/WalletConnectButton.tsx'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [walletModalOpen, setWalletModalOpen] = useState(false)
+  const { publicKey, disconnect, connected } = useWallet()
+
+  const handleWalletClick = () => {
+    if (connected) {
+      disconnect()
+    } else {
+      setWalletModalOpen(true)
+    }
+  }
+
+  const formatAddress = (address: string) => {
+    return `${address.slice(0, 4)}...${address.slice(-4)}`
+  }
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur-lg bg-purple-900/30 border-b border-white/10">
@@ -88,12 +105,7 @@ export default function Navbar() {
           </div>
 
           {/* Connect Wallet Button */}
-          <div className="hidden md:block">
-            <Button variant="gold" glow size="md" className="hover-shake">
-              <ConnectIcon />
-              CONNECT
-            </Button>
-          </div>
+          <WalletConnectButton connecting={(x) => setWalletModalOpen(x)} />
 
           {/* Mobile menu button */}
           <button
@@ -140,13 +152,21 @@ export default function Navbar() {
             Stats
           </a>
           <div className="pt-2">
-            <Button variant="gold" glow className="w-full">
-              <ConnectIcon />
-              CONNECT
+            <Button
+              variant={connected ? 'green' : 'gold'}
+              glow
+              className="w-full"
+              onClick={handleWalletClick}
+            >
+              <ConnectIcon connected={connected} />
+              {connected && publicKey ? formatAddress(publicKey.toBase58()) : 'CONNECT'}
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Wallet Modal */}
+      <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
     </nav>
   )
 }

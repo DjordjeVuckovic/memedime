@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { SlotMachine, type SlotMachineRef } from '@/components/slot/SlotMachine'
 import { GenerationModePicker, type GenerationMode } from '@/components/generate/GenerationModePicker'
 import { PromptMode } from '@/components/generate/PromptMode'
@@ -37,7 +37,7 @@ function GeneratePage() {
   const [prompt, setPrompt] = useState('')
   const [socialUrl, setSocialUrl] = useState('')
   const [socialContent, setSocialContent] = useState('')
-  const [randomResult, setRandomResult] = useState<{
+  const [, setRandomResult] = useState<{
     animal: EmojiData
     food: EmojiData
     vibe: EmojiData
@@ -208,7 +208,7 @@ function GeneratePage() {
               {/* Vibe Dropdown */}
               <div>
                 <label className="block text-sm font-bold text-white/70 mb-2 uppercase tracking-wide">
-                  Coin Vibe:
+                  Persona:
                 </label>
                 <select
                   value={vibe}
@@ -269,6 +269,7 @@ function GeneratePage() {
             {mode === 'prompt' && 'GENERATE FROM PROMPT'}
             {mode === 'social' && 'GENERATE FROM POST'}
           </Button>
+
         </div>
       </div>
     </div>
