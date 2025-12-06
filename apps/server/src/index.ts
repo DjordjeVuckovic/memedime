@@ -2,11 +2,13 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { Scalar } from '@scalar/hono-api-reference'
-import memeRouter from './memecoins'
+import memeRouter from './coins'
 import { openAPIRouteHandler } from 'hono-openapi'
 import { appEnv } from './shared/env'
 
-const app = new Hono()
+const app = new Hono({
+  strict: false
+})
 
 app.use(logger())
 
@@ -26,7 +28,7 @@ app
     return c.text('Internal Server Error', 500)
   })
 
-app.route('/api/v1/', memeRouter)
+app.route('/api/', memeRouter)
 
 app.get(
   '/openapi.json',
@@ -35,7 +37,7 @@ app.get(
       info: {
         title: 'MemeDime API',
         version: '1.0.0',
-        description: 'API for AI powered memecoins coin generation',
+        description: 'API for AI powered coins coin generation',
       },
     },
   }),

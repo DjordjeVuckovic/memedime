@@ -1,5 +1,5 @@
 import {createLLMClient} from '../llms/client'
-import {generateMemeCoin} from './handle'
+import {generateCoin} from './handlers'
 import {appEnv} from '../shared/env'
 import {Hono} from "hono";
 import {
@@ -7,8 +7,8 @@ import {
   resolver,
   describeRoute,
 } from "hono-openapi";
-import {GenMemeReqSchema} from "./schema";
-import {LLMRespSchema} from "../llms/schema";
+import {GenCoinReqSchema} from "./schemas";
+import {CoinRespSchema} from "../llms/schemas";
 
 const llmClient = createLLMClient({
   provider: appEnv.LLM_PROVIDER,
@@ -21,27 +21,28 @@ const memeRouter = new Hono()
 
 memeRouter
   .post(
-    "/memecoins",
+    "/v1/coins",
     describeRoute({
-      tags: ["Meme Coins"],
-      operationId: "generateMemeCoin",
-      description: "Generate a memecoins coin based on the provided input.",
+      tags: ["Coins"],
+      operationId: "generateCoin",
+      description: "Generate a coin based on the provided input.",
       responses: {
-        200: {
-          description: "Successful response with generated memecoins coin.",
+        201: {
+          description: "Successful response with generated coins coin.",
           content: {
             "application/json": {
-              schema: resolver(LLMRespSchema)
+              schema: resolver(CoinRespSchema)
             }
           }
         }
       }
     }),
-    zValidator('json', GenMemeReqSchema),
+    zValidator('json', GenCoinReqSchema),
     async (c) => {
       const body = c.req.valid('json')
-      const gen = await generateMemeCoin(body, llmClient)
-      return c.json(gen, 200)
+      const coin = await generateCoin(body, llmClient)
+      c.header('Location', `/api/v1/coins/${coin.id}`)
+      return c.json(coin, 201)
     }
   );
 

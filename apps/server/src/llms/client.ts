@@ -1,34 +1,58 @@
-import { LLMPrompt, LLMResponse, LLMProvider, LLMOptions } from './schema'
+import { Prompt, LLMOptions, CoinRespSchema, CoinResp } from './schemas'
 import { createXai } from '@ai-sdk/xai'
-import { generateText } from 'ai';
+import { generateObject, generateText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
-import { createOllama, ollama } from 'ollama-ai-provider-v2';
-import { createOpenRouter } from '@openrouter/ai-sdk-provider';
-import { createGroq, groq } from '@ai-sdk/groq';
+import { createOllama } from 'ollama-ai-provider-v2'
+import { createOpenRouter } from '@openrouter/ai-sdk-provider'
+import { createGroq } from '@ai-sdk/groq'
+import { MODEL_CAPABILITIES } from './capabilities'
+import { jsonParse } from '../shared/json'
+import { withEnforcedSchema } from './prompts'
+import { memeCoinResponseExample } from './examples'
 
 export interface LLMClient {
-  genMemeCoin(prompt: LLMPrompt): Promise<LLMResponse>
+  genMemeCoin(prompt: Prompt): Promise<CoinResp>
 }
-
 
 export const createLLMClient = (options: LLMOptions): LLMClient => {
   return {
-    async genMemeCoin(prompt: LLMPrompt): Promise<LLMResponse> {
+
+    async genMemeCoin(prompt: Prompt): Promise<CoinResp> {
       try {
-        const { text, sources } = await generateText({
-          prompt: prompt.text,
+        const modelParams = buildModel(options)
+
+        const capability = MODEL_CAPABILITIES.get(options.modelId)
+        if (capability && capability.supportJsonSchema) {
+          const { object, usage, finishReason } = await generateObject({
+            prompt: prompt.text,
+            schema: CoinRespSchema,
+            temperature: 0.9,
+            maxOutputTokens: 600,
+            ...modelParams,
+          })
+
+          console.log({ usage, finishReason })
+
+          return CoinRespSchema.parse(object)
+        }
+
+        const finalPrompt = withEnforcedSchema<typeof CoinRespSchema>(
+          prompt,
+          memeCoinResponseExample
+        ).text
+
+        const { text, usage, finishReason } = await generateText({
+          prompt: finalPrompt,
           temperature: 0.9,
           maxOutputTokens: 600,
-          ...buildModel(options),
-          providerOptions: {
-            groq: {
-
-            }
-          }
+          ...modelParams,
         })
-        return { text }
+
+        console.log({ text, usage, finishReason })
+
+        return CoinRespSchema.parse(jsonParse(text))
       } catch (error) {
-        console.error('Error generating memecoins coin prompt:', error)
+        console.error('Error generating coins coin prompt:', error)
         throw error
       }
     },
@@ -39,6 +63,8 @@ const buildModel = (options: LLMOptions) => {
   const { provider } = options
 
   switch (provider) {
+    case 'groq':
+      return buildGroqModel(options)
     case 'xai':
       return buildXaiModel(options)
     case 'openai':
@@ -47,10 +73,22 @@ const buildModel = (options: LLMOptions) => {
       return buildOllamaModel(options)
     case 'openrouter':
       return buildOpenRouterModel(options)
-    case 'groq':
-      return buildGroqModel(options)
     default:
       throw new Error(`Unsupported LLM provider: ${provider}`)
+  }
+}
+
+const buildGroqModel = (options: LLMOptions) => {
+  const { modelId, apiKey } = options
+
+  const groq = createGroq({
+    apiKey,
+  })
+
+  let model = groq(modelId)
+
+  return {
+    model,
   }
 }
 
@@ -59,9 +97,9 @@ const buildXaiModel = (options: LLMOptions) => {
 
   const xai = createXai({
     apiKey,
-  });
+  })
 
-  let model = xai(modelId);
+  let model = xai(modelId)
 
   return {
     model,
@@ -73,7 +111,7 @@ const buildOpenAIModel = (options: LLMOptions) => {
 
   const openAi = createOpenAI({
     apiKey,
-    baseURL
+    baseURL,
   })
 
   let model = openAi(modelId)
@@ -90,10 +128,10 @@ const buildOllamaModel = (options: LLMOptions) => {
     baseURL,
   })
 
-  let model = ollama(modelId);
+  let model = ollama(modelId)
 
   return {
-    model
+    model,
   }
 }
 
@@ -105,20 +143,6 @@ const buildOpenRouterModel = (options: LLMOptions) => {
   })
 
   let model = openRouter(modelId)
-
-  return {
-    model,
-  }
-}
-
-const buildGroqModel = (options: LLMOptions) => {
-  const { modelId, apiKey } = options
-
-  const groq = createGroq({
-    apiKey,
-  })
-
-  let model = groq(modelId)
 
   return {
     model,

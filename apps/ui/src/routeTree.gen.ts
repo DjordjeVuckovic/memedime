@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as GenerateRouteImport } from './routes/generate'
+import { Route as GenerateRouteRouteImport } from './routes/generate/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GenerateIndexRouteImport } from './routes/generate/index'
+import { Route as CoinsIndexRouteImport } from './routes/coins/index'
+import { Route as GenerateSocialRouteImport } from './routes/generate/social'
+import { Route as GenerateRandomRouteImport } from './routes/generate/random'
+import { Route as GeneratePromptRouteImport } from './routes/generate/prompt'
+import { Route as CoinsCoinIdRouteImport } from './routes/coins/$coinId'
 
-const GenerateRoute = GenerateRouteImport.update({
+const GenerateRouteRoute = GenerateRouteRouteImport.update({
   id: '/generate',
   path: '/generate',
   getParentRoute: () => rootRouteImport,
@@ -22,31 +28,104 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenerateIndexRoute = GenerateIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GenerateRouteRoute,
+} as any)
+const CoinsIndexRoute = CoinsIndexRouteImport.update({
+  id: '/coins/',
+  path: '/coins/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GenerateSocialRoute = GenerateSocialRouteImport.update({
+  id: '/social',
+  path: '/social',
+  getParentRoute: () => GenerateRouteRoute,
+} as any)
+const GenerateRandomRoute = GenerateRandomRouteImport.update({
+  id: '/random',
+  path: '/random',
+  getParentRoute: () => GenerateRouteRoute,
+} as any)
+const GeneratePromptRoute = GeneratePromptRouteImport.update({
+  id: '/prompt',
+  path: '/prompt',
+  getParentRoute: () => GenerateRouteRoute,
+} as any)
+const CoinsCoinIdRoute = CoinsCoinIdRouteImport.update({
+  id: '/coins/$coinId',
+  path: '/coins/$coinId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/generate': typeof GenerateRoute
+  '/generate': typeof GenerateRouteRouteWithChildren
+  '/coins/$coinId': typeof CoinsCoinIdRoute
+  '/generate/prompt': typeof GeneratePromptRoute
+  '/generate/random': typeof GenerateRandomRoute
+  '/generate/social': typeof GenerateSocialRoute
+  '/coins': typeof CoinsIndexRoute
+  '/generate/': typeof GenerateIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/generate': typeof GenerateRoute
+  '/coins/$coinId': typeof CoinsCoinIdRoute
+  '/generate/prompt': typeof GeneratePromptRoute
+  '/generate/random': typeof GenerateRandomRoute
+  '/generate/social': typeof GenerateSocialRoute
+  '/coins': typeof CoinsIndexRoute
+  '/generate': typeof GenerateIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/generate': typeof GenerateRoute
+  '/generate': typeof GenerateRouteRouteWithChildren
+  '/coins/$coinId': typeof CoinsCoinIdRoute
+  '/generate/prompt': typeof GeneratePromptRoute
+  '/generate/random': typeof GenerateRandomRoute
+  '/generate/social': typeof GenerateSocialRoute
+  '/coins/': typeof CoinsIndexRoute
+  '/generate/': typeof GenerateIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/generate'
+  fullPaths:
+    | '/'
+    | '/generate'
+    | '/coins/$coinId'
+    | '/generate/prompt'
+    | '/generate/random'
+    | '/generate/social'
+    | '/coins'
+    | '/generate/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/generate'
-  id: '__root__' | '/' | '/generate'
+  to:
+    | '/'
+    | '/coins/$coinId'
+    | '/generate/prompt'
+    | '/generate/random'
+    | '/generate/social'
+    | '/coins'
+    | '/generate'
+  id:
+    | '__root__'
+    | '/'
+    | '/generate'
+    | '/coins/$coinId'
+    | '/generate/prompt'
+    | '/generate/random'
+    | '/generate/social'
+    | '/coins/'
+    | '/generate/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  GenerateRoute: typeof GenerateRoute
+  GenerateRouteRoute: typeof GenerateRouteRouteWithChildren
+  CoinsCoinIdRoute: typeof CoinsCoinIdRoute
+  CoinsIndexRoute: typeof CoinsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -55,7 +134,7 @@ declare module '@tanstack/react-router' {
       id: '/generate'
       path: '/generate'
       fullPath: '/generate'
-      preLoaderRoute: typeof GenerateRouteImport
+      preLoaderRoute: typeof GenerateRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -65,12 +144,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/generate/': {
+      id: '/generate/'
+      path: '/'
+      fullPath: '/generate/'
+      preLoaderRoute: typeof GenerateIndexRouteImport
+      parentRoute: typeof GenerateRouteRoute
+    }
+    '/coins/': {
+      id: '/coins/'
+      path: '/coins'
+      fullPath: '/coins'
+      preLoaderRoute: typeof CoinsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/generate/social': {
+      id: '/generate/social'
+      path: '/social'
+      fullPath: '/generate/social'
+      preLoaderRoute: typeof GenerateSocialRouteImport
+      parentRoute: typeof GenerateRouteRoute
+    }
+    '/generate/random': {
+      id: '/generate/random'
+      path: '/random'
+      fullPath: '/generate/random'
+      preLoaderRoute: typeof GenerateRandomRouteImport
+      parentRoute: typeof GenerateRouteRoute
+    }
+    '/generate/prompt': {
+      id: '/generate/prompt'
+      path: '/prompt'
+      fullPath: '/generate/prompt'
+      preLoaderRoute: typeof GeneratePromptRouteImport
+      parentRoute: typeof GenerateRouteRoute
+    }
+    '/coins/$coinId': {
+      id: '/coins/$coinId'
+      path: '/coins/$coinId'
+      fullPath: '/coins/$coinId'
+      preLoaderRoute: typeof CoinsCoinIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface GenerateRouteRouteChildren {
+  GeneratePromptRoute: typeof GeneratePromptRoute
+  GenerateRandomRoute: typeof GenerateRandomRoute
+  GenerateSocialRoute: typeof GenerateSocialRoute
+  GenerateIndexRoute: typeof GenerateIndexRoute
+}
+
+const GenerateRouteRouteChildren: GenerateRouteRouteChildren = {
+  GeneratePromptRoute: GeneratePromptRoute,
+  GenerateRandomRoute: GenerateRandomRoute,
+  GenerateSocialRoute: GenerateSocialRoute,
+  GenerateIndexRoute: GenerateIndexRoute,
+}
+
+const GenerateRouteRouteWithChildren = GenerateRouteRoute._addFileChildren(
+  GenerateRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  GenerateRoute: GenerateRoute,
+  GenerateRouteRoute: GenerateRouteRouteWithChildren,
+  CoinsCoinIdRoute: CoinsCoinIdRoute,
+  CoinsIndexRoute: CoinsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
