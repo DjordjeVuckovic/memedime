@@ -17,8 +17,11 @@ const buttonVariants = cva(
         cyan: 'bg-cyan-400 hover:bg-cyan-300 text-black brutal-shadow',
         green: 'bg-green-500 hover:bg-green-400 text-black brutal-shadow',
         red: 'bg-red-500 hover:bg-red-400 text-white brutal-shadow',
+        orange: 'bg-orange-500 hover:bg-orange-400 text-white brutal-shadow',
         ghost:
           'bg-transparent hover:bg-white/10 text-white border-white',
+        blackwhite:
+          'bg-white hover:bg-gray-100 text-black brutal-shadow',
       },
       size: {
         sm: 'h-10 px-4 text-xs',

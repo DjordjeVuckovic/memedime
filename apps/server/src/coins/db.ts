@@ -32,5 +32,5 @@ export const coins = sqliteTable(
   ],
 )
 
-export type Memecoin = typeof coins.$inferSelect
-export type InsertMemecoin = typeof coins.$inferInsert
+export type ReadCoin = typeof coins.$inferSelect
+export type InsertCoin = typeof coins.$inferInsert

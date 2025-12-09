@@ -28,7 +28,7 @@ export type RandomCoinReq = z.infer<typeof RandomCoinReqSchema>
 
 export const GenCoinRespSchema = CoinRespSchema.extend({
   id: z.number(),
-  combos: CoinCombosSchema
+  combos: CoinCombosSchema.optional()
 })
 
 export type GenCoinResp = z.infer<typeof GenCoinRespSchema>

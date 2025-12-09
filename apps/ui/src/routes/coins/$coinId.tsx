@@ -1,9 +1,12 @@
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, ExternalLink, Twitter, Copy, Check, TrendingUp, User, Rocket } from 'lucide-react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft, Copy, Check, TrendingUp, User, Rocket, Send } from 'lucide-react'
 import { useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import XIcon from '@/assets/icons/x.svg'
+import FarcasterIcon from '@/assets/icons/farcaster.svg'
+import RedditIcon from '@/assets/icons/reddit.svg'
 
 export const Route = createFileRoute('/coins/$coinId')({
   component: CoinDetailPage,
@@ -28,8 +31,7 @@ const mockCoinData: Record<string, any> = {
     marketing:
       "Launch a browser-based idle game where users stake $CAPYPIZZA to earn pizza NFTs. Partner with gaming influencers and run a 'Chillest Capybara' meme contest.",
     createdAt: '2024-12-04T10:30:00Z',
-    owner: 'DegenKing420',
-    ownerAddress: '7xKX...4Ry9',
+    ownerAddress: 'EykyePxtqiskSJ4udsPQ2q95FWK2nVg7zhSpte2xDMoE',
     mode: 'random',
     prompt: null,
     combo: {
@@ -41,7 +43,6 @@ const mockCoinData: Record<string, any> = {
       vibeName: 'Diamond',
     },
     context: 'make it about gaming',
-    views: 1247,
     launched: false,
   },
 }
@@ -55,7 +56,7 @@ function CoinDetailPage() {
   const coin = mockCoinData[coinId]
 
   // Check if current user is the coin creator
-  const isCreator = publicKey && coin?.ownerAddress === publicKey.toBase58().slice(0, 4) + '...' + publicKey.toBase58().slice(-4)
+  const isCreator = publicKey && coin?.ownerAddress === publicKey.toBase58()
 
   if (!coin) {
     return (
@@ -103,11 +104,37 @@ function CoinDetailPage() {
     setTimeout(() => setCopiedTicker(false), 2000)
   }
 
-  const handleShareTwitter = () => {
+  const handleShareX = () => {
     const text = `Just discovered ${coin.ticker} on @memedime.fun! 🎰\n\n"${coin.tagline}"\n\nCheck it out:`
     const url = `https://memedime.fun/coins/${coin.id}`
     window.open(
       `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      '_blank',
+    )
+  }
+
+  const handleShareTelegram = () => {
+    const text = `Just discovered ${coin.ticker} on memedime.fun! 🎰\n\n"${coin.tagline}"\n\nCheck it out: https://memedime.fun/coins/${coin.id}`
+    window.open(
+      `https://t.me/share/url?url=${encodeURIComponent(`https://memedime.fun/coins/${coin.id}`)}&text=${encodeURIComponent(text)}`,
+      '_blank',
+    )
+  }
+
+  const handleShareReddit = () => {
+    const url = `https://memedime.fun/coins/${coin.id}`
+    const title = `${coin.ticker} - ${coin.tagline}`
+    window.open(
+      `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}`,
+      '_blank',
+    )
+  }
+
+  const handleShareFarcaster = () => {
+    const text = `Just discovered ${coin.ticker} on memedime.fun! 🎰\n\n"${coin.tagline}"`
+    const url = `https://memedime.fun/coins/${coin.id}`
+    window.open(
+      `https://warpcast.com/~/compose?text=${encodeURIComponent(text)}&embeds[]=${encodeURIComponent(url)}`,
       '_blank',
     )
   }
@@ -174,34 +201,62 @@ function CoinDetailPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap gap-3">
-              <Button variant="primary" glow onClick={handleShareTwitter}>
-                <Twitter className="w-4 h-4 mr-2" />
-                Share on Twitter
-              </Button>
+            <div className="space-y-4">
+              {/* Social Share Buttons */}
+              <div>
+                <p className="text-sm font-bold text-white/70 mb-3 uppercase tracking-wide">
+                  Share on Social:
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button variant="blackwhite" onClick={handleShareX}>
+                    <img src={XIcon} alt="X" className="w-4 h-4 mr-2" />
+                    Share on X
+                  </Button>
+
+                  <Button variant="cyan" glow onClick={handleShareTelegram}>
+                    <Send className="w-4 h-4 mr-2" />
+                    Share on Telegram
+                  </Button>
+
+                  <Button variant="orange" glow onClick={handleShareReddit}>
+                    <img src={RedditIcon} alt="Reddit" className="w-4 h-4 mr-2" />
+                    Share on Reddit
+                  </Button>
+
+                  <Button variant="secondary" glow onClick={handleShareFarcaster}>
+                    <img src={FarcasterIcon} alt="Farcaster" className="w-4 h-4 mr-2" />
+                    Share on Farcaster
+                  </Button>
+                </div>
+              </div>
 
               {/* Launch buttons - only visible to creator */}
               {isCreator && (
-                <>
-                  <div className="relative">
-                    <Button variant="gold" glow disabled className="opacity-60 cursor-not-allowed">
-                      <Rocket className="w-4 h-4 mr-2" />
-                      Launch on LetsBonk
-                    </Button>
-                    <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-black px-2 py-0.5 rounded-full border-2 border-black">
-                      SOON
-                    </span>
+                <div>
+                  <p className="text-sm font-bold text-white/70 mb-3 uppercase tracking-wide">
+                    Launch Your Coin:
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <div className="relative">
+                      <Button variant="green" glow disabled className="opacity-60 cursor-not-allowed">
+                        <Rocket className="w-4 h-4 mr-2" />
+                        Launch on Pump.fun
+                      </Button>
+                      <span className="absolute -top-2 -right-2 bg-green-400 text-black text-xs font-black px-2 py-0.5 rounded-full border-2 border-black">
+                        SOON
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <Button variant="gold" glow disabled className="opacity-60 cursor-not-allowed">
+                        <Rocket className="w-4 h-4 mr-2" />
+                        Launch on LetsBonk
+                      </Button>
+                      <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-black px-2 py-0.5 rounded-full border-2 border-black">
+                        SOON
+                      </span>
+                    </div>
                   </div>
-                  <div className="relative">
-                    <Button variant="green" glow disabled className="opacity-60 cursor-not-allowed">
-                      <Rocket className="w-4 h-4 mr-2" />
-                      Launch on Pump.fun
-                    </Button>
-                    <span className="absolute -top-2 -right-2 bg-green-400 text-black text-xs font-black px-2 py-0.5 rounded-full border-2 border-black">
-                      SOON
-                    </span>
-                  </div>
-                </>
+                </div>
               )}
             </div>
           </CardContent>
@@ -227,10 +282,6 @@ function CoinDetailPage() {
               <div className="flex justify-between items-center">
                 <span className="text-white/60 font-mono text-sm">Supply:</span>
                 <span className="font-bold font-mono">{coin.supply}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-white/60 font-mono text-sm">Views:</span>
-                <span className="font-bold font-mono">{coin.views}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-white/60 font-mono text-sm">Created:</span>
@@ -319,11 +370,7 @@ function CoinDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-white/60 font-mono text-sm">Owner:</span>
-                <span className="font-bold">{coin.owner}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-white/60 font-mono text-sm">Address:</span>
+                <span className="text-white/60 font-mono text-sm">Wallet:</span>
                 <span className="font-bold font-mono text-sm">{coin.ownerAddress}</span>
               </div>
               {coin.combo && (

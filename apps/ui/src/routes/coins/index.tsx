@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { Search, TrendingUp, Clock, Sparkles, Eye } from 'lucide-react'
+import { Search, TrendingUp, Clock, Sparkles } from 'lucide-react'
 
 export const Route = createFileRoute('/coins/')({
   component: CoinsCollectionPage,
@@ -16,9 +16,8 @@ const mockCoins = [
     description: 'The first gaming memecoin that combines capybara vibes with pizza rewards',
     supply: '420,690,000,000',
     createdAt: '2024-12-04T10:30:00Z',
-    owner: 'DegenKing420',
+    ownerAddress: '7xKX...4Ry9',
     mode: 'random',
-    views: 1247,
   },
   {
     id: '2',
@@ -28,9 +27,8 @@ const mockCoins = [
     description: 'When dogs meet tacos in space, magic happens',
     supply: '1,000,000,000',
     createdAt: '2024-12-04T09:15:00Z',
-    owner: 'TacoLover',
+    ownerAddress: '9aB2...8Xm5',
     mode: 'prompt',
-    views: 892,
   },
   {
     id: '3',
@@ -40,9 +38,8 @@ const mockCoins = [
     description: 'Mythical creatures eating sushi while riding rockets',
     supply: '777,777,777',
     createdAt: '2024-12-04T08:00:00Z',
-    owner: 'CryptoWhale',
+    ownerAddress: '3pQw...6Ty1',
     mode: 'social',
-    views: 2103,
   },
   {
     id: '4',
@@ -52,9 +49,8 @@ const mockCoins = [
     description: 'Frogs serving diamond-tier burgers in the metaverse',
     supply: '690,420,000',
     createdAt: '2024-12-03T22:00:00Z',
-    owner: 'BurgerFrog',
+    ownerAddress: '5hNm...2Rk9',
     mode: 'random',
-    views: 456,
   },
   {
     id: '5',
@@ -64,9 +60,8 @@ const mockCoins = [
     description: 'Antarctic penguins bringing the heat with spicy ramen NFTs',
     supply: '100,000,000',
     createdAt: '2024-12-03T18:30:00Z',
-    owner: 'RamenMaster',
+    ownerAddress: '8vLp...3Ws7',
     mode: 'prompt',
-    views: 1893,
   },
   {
     id: '6',
@@ -76,9 +71,8 @@ const mockCoins = [
     description: 'Decentralized pizza delivery powered by space monkeys',
     supply: '888,888,888',
     createdAt: '2024-12-03T14:15:00Z',
-    owner: 'ApeDelivery',
+    ownerAddress: '4xTr...9Pk4',
     mode: 'social',
-    views: 2456,
   },
 ]
 
@@ -312,14 +306,6 @@ function CoinsCollectionPage() {
 
                       {/* Content */}
                       <div className="relative p-6 h-full flex flex-col">
-                        {/* Header */}
-                        <div className="flex items-start justify-end mb-4">
-                          <div className="flex items-center gap-1 text-white/40 text-sm font-mono">
-                            <Eye className="w-4 h-4" />
-                            {coin.views}
-                          </div>
-                        </div>
-
                         {/* Coin Info */}
                         <div className="flex-1 mb-4">
                           <h3 className="text-2xl font-black mb-2 leading-tight line-clamp-2 group-hover:text-white transition-colors">
@@ -337,9 +323,17 @@ function CoinsCollectionPage() {
                           <p className="text-white/40 text-sm line-clamp-2">{coin.description}</p>
                         </div>
 
-                        {/* Footer */}
+                        {/* Footer - Wallet Address */}
                         <div className="flex items-center justify-between pt-4 border-t-2 border-white/10">
-                          <div className="text-xs text-white/30 font-mono">By {coin.owner}</div>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: modeColor }}
+                            />
+                            <span className="text-xs text-white/30 font-mono">
+                              {coin.ownerAddress}
+                            </span>
+                          </div>
                           <Sparkles className="w-5 h-5 text-white/20 group-hover:text-yellow-400 transition-colors" />
                         </div>
                       </div>
