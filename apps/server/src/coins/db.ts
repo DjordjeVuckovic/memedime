@@ -28,9 +28,9 @@ export const coins = sqliteTable(
   },
   // prettier-ignore
   (table) => [
-    index('idx_coins_name').on(table.name)
+    index('idx_mode').on(table.mode)
   ],
 )
 
-export type ReadCoin = typeof coins.$inferSelect
-export type InsertCoin = typeof coins.$inferInsert
+export type Coin = typeof coins.$inferSelect
+export type NewCoin = typeof coins.$inferInsert

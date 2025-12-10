@@ -2,11 +2,11 @@ import { GenCoinResp, GenCoinReq, RandomCoinReq, CoinCombos, Mode } from './sche
 import { LLMClient } from '../llms/client'
 import { toLLMPrompt } from '../llms/prompts'
 import { withRetry } from '../shared/resilience'
-import { coins, ReadCoin } from './db'
+import { coins, Coin } from './db'
 import { db } from '../db'
 import { spinEmojis } from './emojis'
 import { CoinResp } from '../llms/schemas'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 
 export type GenCoinParams = {
   req: GenCoinReq,
@@ -59,7 +59,7 @@ const createDbCoin = async (mode: Mode, coin: CoinResp, prompt?: string, combos?
   return id
 }
 
-export const getCoinById = async (id: number): Promise<ReadCoin | null> => {
+export const getCoinById = async (id: number): Promise<Coin | null> => {
   const coin = await db
     .select()
     .from(coins)
@@ -71,4 +71,27 @@ export const getCoinById = async (id: number): Promise<ReadCoin | null> => {
   }
 
   return coin[0]
+}
+
+export const searchCoins = async (q: string, mode?: Mode): Promise<Coin[]> => {
+  const searchQuery = mode
+    ? sql`
+          SELECT c.* 
+          FROM coins c
+          JOIN coins_fts fts ON c.id = fts.rowid
+          WHERE coins_fts MATCH ${q}
+            AND c.mode = ${mode}
+            AND c.deleted_at IS NULL
+          ORDER BY rank
+        `
+    : sql`
+          SELECT c.* 
+          FROM coins c
+          JOIN coins_fts fts ON c.id = fts.rowid
+          WHERE coins_fts MATCH ${q}
+            AND c.deleted_at IS NULL
+          ORDER BY rank
+        `;
+
+  return db.all<Coin>(searchQuery);
 }

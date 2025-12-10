@@ -18,5 +18,4 @@ CREATE TABLE `coins` (
 	`deleted_at` integer
 );
 --> statement-breakpoint
-CREATE INDEX `idx_coins_mode` ON `coins` (`mode`);--> statement-breakpoint
-CREATE INDEX `idx_coins_created_at` ON `coins` (`created_at`);
+CREATE INDEX `idx_mode` ON `coins` (`mode`);

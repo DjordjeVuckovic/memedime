@@ -47,6 +47,6 @@ export type CoinResp = z.infer<typeof CoinRespSchema>
 export const PersonaSchema = z
   .object({
     name: z.string(),
-    description: z.string(),
+    description: z.string().optional(),
   })
   .meta({ description: 'Schema for LLM persona' })
