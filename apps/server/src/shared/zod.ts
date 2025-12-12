@@ -1,8 +1,10 @@
 import { z } from 'zod'
 
-export const getSchemaDescription = <T extends  z.ZodSchema>(schema: T): {
-  description: string | undefined,
-  jsonSchema: Record<string, unknown>,
+export const getSchemaDescription = <T extends z.ZodSchema>(
+  schema: T,
+): {
+  description: string | undefined
+  jsonSchema: Record<string, unknown>
 } => {
   const jsonSpec = z.toJSONSchema(schema)
   return {
@@ -11,11 +13,11 @@ export const getSchemaDescription = <T extends  z.ZodSchema>(schema: T): {
   }
 }
 
-export const percentageField = z.preprocess(
-  (val) => {
+export const percentageField = z
+  .union([z.number(), z.string(), z.undefined()])
+  .transform((val) => {
+    if (val === undefined) return undefined
     if (typeof val === 'number') return `${val}%`
-    if (typeof val === 'string') return val
     return val
-  },
-  z.string().optional()
-)
+  })
+  .optional()

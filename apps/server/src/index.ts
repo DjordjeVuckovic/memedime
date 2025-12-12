@@ -7,7 +7,7 @@ import { openAPIRouteHandler } from 'hono-openapi'
 import { appEnv } from './shared/env'
 
 const app = new Hono({
-  strict: false
+  strict: false,
 })
 
 app.use(logger())
@@ -50,7 +50,6 @@ app.get(
     theme: 'purple',
     pageTitle: 'Memedime Server API',
     title: 'Memedime Server API',
-    description: 'API documentation for the Memedime server',
   }),
 )
 

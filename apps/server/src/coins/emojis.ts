@@ -1,9 +1,5 @@
 import { z } from 'zod'
-
-export const EmojiSchema = z.object({
-  name: z.string(),
-  emoji: z.string(),
-})
+import { EmojiSchema } from '@memedime/contracts'
 
 export type Emoji = z.infer<typeof EmojiSchema>
 
@@ -113,7 +109,7 @@ export const VIBES: Emoji[] = [
 
 const randomEmoji = (emojis: Emoji[]): Emoji => {
   const index = Math.floor(Math.random() * emojis.length)
-  return emojis[index]
+  return emojis[index]!
 }
 
 export const spinEmojis = (): {

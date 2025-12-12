@@ -3,9 +3,8 @@ import { generateCoin, getCoinById, searchCoins } from './handlers'
 import { appEnv } from '../shared/env'
 import { Hono } from 'hono'
 import { validator as zValidator, resolver, describeRoute } from 'hono-openapi'
-import { GenCoinReqSchema, ModeSchema } from './schemas'
-import { CoinRespSchema } from '../llms/schemas'
 import { z } from 'zod'
+import { CoinRespSchema, GenCoinReqSchema, ModeSchema } from '@memedime/contracts'
 
 const llmClient = createLLMClient({
   provider: appEnv.LLM_PROVIDER,
@@ -71,7 +70,7 @@ memeRouter.get(
       },
     },
   }),
-  zValidator('param', z.object({ id: z.number() })),
+  zValidator('param', z.object({ id: z.coerce.number()})),
   async (c) => {
     const { id } = c.req.valid('param')
 

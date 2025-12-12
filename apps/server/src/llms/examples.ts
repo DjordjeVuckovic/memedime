@@ -1,6 +1,6 @@
-import { CoinResp } from './schemas'
+import { LLMCoinResp } from './schemas'
 
-export const memeCoinResponseExample: CoinResp = {
+export const memeCoinResponseExample: LLMCoinResp = {
   name: 'catchy meme name',
   ticker: '$SYMBOL',
   tagline: 'makes degens ape',

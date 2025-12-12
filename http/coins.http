@@ -1,0 +1,11 @@
+@base={{baseUrl}}
+### generate new random coin
+POST {{base}}/api/v1/coins
+Content-Type: application/json
+
+{
+  "prompt": "Trump coin with a funny slogan"
+}
+
+### coins fts search
+

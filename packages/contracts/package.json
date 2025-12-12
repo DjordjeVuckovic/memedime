@@ -1,0 +1,19 @@
+{
+  "name": "@memedime/contracts",
+  "version": "0.0.0",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "zod": "^4.1.13"
+  }
+}

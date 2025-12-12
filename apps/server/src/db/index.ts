@@ -4,6 +4,8 @@ import { appEnv } from '../shared/env'
 
 export const sqlite = new Database(appEnv.DB_URL);
 
-sqlite.run("PRAGMA journal_mode = WAL;");
+if (appEnv.USE_WAL) {
+  sqlite.run('PRAGMA journal_mode = WAL;')
+}
 
 export const db = drizzle({ client: sqlite});

@@ -13,3 +13,6 @@ out/
 **/.tanstack
 
 **/*.env
+
+**/*.db
+**/*.db-*

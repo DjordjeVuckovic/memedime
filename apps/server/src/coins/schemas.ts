@@ -1,34 +1,13 @@
-import {z} from 'zod'
-import { EmojiSchema } from './emojis'
-import { CoinRespSchema } from '../llms/schemas'
+import { z } from 'zod'
+import { LLMCoinRespSchema } from '../llms/schemas'
+import { CoinCombosSchema } from '@memedime/contracts'
 
-export const ModeSchema = z.enum(['random', 'prompt', 'social'])
+export const CoinSchema = z
+  .object({
+    id: z.number(),
+    combos: CoinCombosSchema.optional(),
+    walletAddress: z.string().optional(),
+  })
+  .and(LLMCoinRespSchema)
 
-export type Mode = z.infer<typeof ModeSchema>
-
-export const GenCoinReqSchema = z.object({
-  prompt: z.string().optional(),
-})
-
-export const CoinCombosSchema = z.object({
-  animal: EmojiSchema,
-  food: EmojiSchema,
-  vibe: EmojiSchema,
-})
-
-export type CoinCombos = z.infer<typeof CoinCombosSchema>
-
-export const RandomCoinReqSchema = GenCoinReqSchema.extend({
-  combos: CoinCombosSchema
-})
-
-export type GenCoinReq = z.infer<typeof GenCoinReqSchema>
-
-export type RandomCoinReq = z.infer<typeof RandomCoinReqSchema>
-
-export const GenCoinRespSchema = CoinRespSchema.extend({
-  id: z.number(),
-  combos: CoinCombosSchema.optional()
-})
-
-export type GenCoinResp = z.infer<typeof GenCoinRespSchema>
+export type CoinResp = z.infer<typeof CoinSchema>

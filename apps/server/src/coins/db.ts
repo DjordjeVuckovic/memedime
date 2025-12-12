@@ -18,6 +18,7 @@ export const coins = sqliteTable(
     mode: text('mode').notNull(),
     combos: text('combos'), // JSON stringified array
     prompt: text('prompt'),
+    walletAddress: text('wallet_address').default('0x0000000000000000000000000000000000000000'),
     createdAt: integer('created_at', { mode: 'timestamp' })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -34,3 +35,4 @@ export const coins = sqliteTable(
 
 export type Coin = typeof coins.$inferSelect
 export type NewCoin = typeof coins.$inferInsert
+

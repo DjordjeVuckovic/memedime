@@ -1,4 +1,4 @@
-import { Prompt, LLMOptions, CoinRespSchema, CoinResp } from './schemas'
+import { Prompt, LLMOptions, LLMCoinRespSchema, LLMCoinResp } from './schemas'
 import { createXai } from '@ai-sdk/xai'
 import { generateObject, generateText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
@@ -11,13 +11,12 @@ import { withEnforcedSchema } from './prompts'
 import { memeCoinResponseExample } from './examples'
 
 export interface LLMClient {
-  genMemeCoin(prompt: Prompt): Promise<CoinResp>
+  genCoin(prompt: Prompt): Promise<LLMCoinResp>
 }
 
 export const createLLMClient = (options: LLMOptions): LLMClient => {
   return {
-
-    async genMemeCoin(prompt: Prompt): Promise<CoinResp> {
+    async genCoin(prompt: Prompt): Promise<LLMCoinResp> {
       try {
         const modelParams = buildModel(options)
 
@@ -25,7 +24,7 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
         if (capability && capability.supportJsonSchema) {
           const { object, usage, finishReason } = await generateObject({
             prompt: prompt.text,
-            schema: CoinRespSchema,
+            schema: LLMCoinRespSchema,
             temperature: 0.9,
             maxOutputTokens: 600,
             ...modelParams,
@@ -33,10 +32,10 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
 
           console.log({ usage, finishReason })
 
-          return CoinRespSchema.parse(object)
+          return LLMCoinRespSchema.parse(object)
         }
 
-        const finalPrompt = withEnforcedSchema<typeof CoinRespSchema>(
+        const finalPrompt = withEnforcedSchema<typeof LLMCoinRespSchema>(
           prompt,
           memeCoinResponseExample
         ).text
@@ -50,7 +49,7 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
 
         console.log({ text, usage, finishReason })
 
-        return CoinRespSchema.parse(jsonParse(text))
+        return LLMCoinRespSchema.parse(jsonParse(text))
       } catch (error) {
         console.error('Error generating coins coin prompt:', error)
         throw error
@@ -61,7 +60,6 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
 
 const buildModel = (options: LLMOptions) => {
   const { provider } = options
-
   switch (provider) {
     case 'groq':
       return buildGroqModel(options)

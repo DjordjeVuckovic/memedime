@@ -1,13 +1,15 @@
 import { z } from 'zod'
 import { percentageField } from '../shared/zod'
 
-// prettier-ignore
-export type LLMProvider =
-  | 'xai'
-  | 'openai'
-  | 'ollama'
-  | 'openrouter'
-  | 'groq';
+export const LLMProviderSchema = z.enum([
+  'xai',
+  'openai',
+  'ollama',
+  'openrouter',
+  'groq',
+]).meta({ description: 'Supported LLM providers' })
+
+export type LLMProvider = z.infer<typeof LLMProviderSchema>
 
 export type LLMOptions = {
   provider: LLMProvider
@@ -20,7 +22,7 @@ export type Prompt = {
   text: string
 }
 
-export const CoinRespSchema = z
+export const LLMCoinRespSchema = z
   .object({
     name: z.string(),
     ticker: z.string(),
@@ -42,7 +44,7 @@ export const CoinRespSchema = z
     description: 'Schema for meme coin generation response',
   })
 
-export type CoinResp = z.infer<typeof CoinRespSchema>
+export type LLMCoinResp = z.infer<typeof LLMCoinRespSchema>
 
 export const PersonaSchema = z
   .object({
@@ -50,3 +52,4 @@ export const PersonaSchema = z
     description: z.string().optional(),
   })
   .meta({ description: 'Schema for LLM persona' })
+

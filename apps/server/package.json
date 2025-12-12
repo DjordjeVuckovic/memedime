@@ -17,7 +17,8 @@
     "hono-openapi": "^1.1.1",
     "jsonrepair": "^3.13.1",
     "ollama-ai-provider-v2": "^1.5.5",
-    "zod": "^4.1.13"
+    "zod": "^4.1.13",
+    "@memedime/contracts": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest",
