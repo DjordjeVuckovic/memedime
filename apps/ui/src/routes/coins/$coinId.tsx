@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Copy, Check, TrendingUp, User, Rocket, Send } from 'lucide-react'
+import { ArrowLeft, Copy, Check, TrendingUp, User, Rocket, Send, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { useCoin } from './queries'
 import XIcon from '@/assets/icons/x.svg'
 import FarcasterIcon from '@/assets/icons/farcaster.svg'
 import RedditIcon from '@/assets/icons/reddit.svg'
@@ -12,53 +13,30 @@ export const Route = createFileRoute('/coins/$coinId')({
   component: CoinDetailPage,
 })
 
-// Mock data - replace with actual API call
-const mockCoinData: Record<string, any> = {
-  '1': {
-    id: '1',
-    name: 'CAPYBARA PIZZA QUEST',
-    ticker: '$CAPYPIZZA',
-    tagline: 'AFK farming with diamond paws',
-    description:
-      'The first gaming memecoin that combines capybara vibes with pizza rewards. Holders earn passive pizza tokens while staking their capybaras in the ultimate chill gaming experience.',
-    supply: '420,690,000,000',
-    tokenomics: {
-      lpBurnPercentage: 80,
-      devPercentage: 5,
-      marketingFeePercentage: 5,
-      communityFeePercentage: 10,
-    },
-    marketing:
-      "Launch a browser-based idle game where users stake $CAPYPIZZA to earn pizza NFTs. Partner with gaming influencers and run a 'Chillest Capybara' meme contest.",
-    createdAt: '2024-12-04T10:30:00Z',
-    ownerAddress: 'EykyePxtqiskSJ4udsPQ2q95FWK2nVg7zhSpte2xDMoE',
-    mode: 'random',
-    prompt: null,
-    combo: {
-      animal: '🦫',
-      animalName: 'Capybara',
-      food: '🍕',
-      foodName: 'Pizza',
-      vibe: '💎',
-      vibeName: 'Diamond',
-    },
-    context: 'make it about gaming',
-    launched: false,
-  },
-}
-
 function CoinDetailPage() {
   const { coinId } = Route.useParams()
   const navigate = useNavigate()
   const { publicKey } = useWallet()
   const [copiedTicker, setCopiedTicker] = useState(false)
 
-  const coin = mockCoinData[coinId]
+  // Fetch coin data
+  const { data: coin, isLoading, isError } = useCoin(Number(coinId))
 
   // Check if current user is the coin creator
-  const isCreator = publicKey && coin?.ownerAddress === publicKey.toBase58()
+  const isCreator = publicKey && coin?.walletAddress === publicKey.toBase58()
 
-  if (!coin) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen py-20 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 mx-auto mb-4 text-purple-400 animate-spin" />
+          <p className="text-2xl font-black text-white/40">LOADING COIN...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (isError || !coin) {
     return (
       <div className="min-h-screen py-20 px-4 flex items-center justify-center">
         <div className="text-center">
@@ -72,7 +50,7 @@ function CoinDetailPage() {
     )
   }
 
-  const getModeColor = (mode: string) => {
+  const getModeColor = (mode?: string) => {
     switch (mode) {
       case 'random':
         return 'rgb(251, 191, 36)' // yellow
@@ -85,7 +63,7 @@ function CoinDetailPage() {
     }
   }
 
-  const getModeIcon = (mode: string) => {
+  const getModeIcon = (mode?: string) => {
     switch (mode) {
       case 'random':
         return '🎲'
@@ -143,7 +121,7 @@ function CoinDetailPage() {
     <div className="min-h-screen py-20 px-4">
       <div className="max-w-5xl mx-auto">
         {/* Back Button */}
-        <div className="mb-8 animate-slide-up">
+        <div className="mb-8">
           <Button variant="ghost" onClick={() => navigate({ to: '/coins' })}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Collection
@@ -152,9 +130,8 @@ function CoinDetailPage() {
 
         {/* Main Header Card */}
         <Card
-          className="mb-8 animate-slide-up"
+          className="mb-8"
           style={{
-            animationDelay: '100ms',
             boxShadow: `8px 8px 0px ${getModeColor(coin.mode)}`,
           }}
         >
@@ -162,21 +139,16 @@ function CoinDetailPage() {
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-5xl">{getModeIcon(coin.mode)}</span>
+                  <span className="text-5xl">{getModeIcon(coin.combos?.animal.emoji)}</span>
                   <div
                     className="px-4 py-2 rounded-lg font-bold uppercase text-sm"
                     style={{
-                      backgroundColor: `${getModeColor(coin.mode)}20`,
-                      color: getModeColor(coin.mode),
+                      backgroundColor: `${getModeColor()}20`,
+                      color: getModeColor(),
                     }}
                   >
-                    {coin.mode} MODE
+                    MEME COIN
                   </div>
-                  {coin.launched && (
-                    <div className="px-4 py-2 rounded-lg font-bold uppercase text-sm bg-green-500/20 text-green-400">
-                      LAUNCHED
-                    </div>
-                  )}
                 </div>
                 <h1 className="text-4xl sm:text-5xl font-black mb-4 uppercase tracking-tight">
                   {coin.name}
@@ -264,7 +236,7 @@ function CoinDetailPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Description */}
-          <Card className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+          <Card>
             <CardHeader>
               <CardTitle>Description</CardTitle>
             </CardHeader>
@@ -274,7 +246,7 @@ function CoinDetailPage() {
           </Card>
 
           {/* Stats */}
-          <Card className="animate-slide-up" style={{ animationDelay: '250ms' }}>
+          <Card>
             <CardHeader>
               <CardTitle>Stats</CardTitle>
             </CardHeader>
@@ -293,7 +265,7 @@ function CoinDetailPage() {
           </Card>
 
           {/* Tokenomics */}
-          <Card className="animate-slide-up" style={{ animationDelay: '300ms' }}>
+          <Card>
             <CardHeader>
               <CardTitle>
                 <TrendingUp className="w-5 h-5 inline mr-2" />
@@ -361,7 +333,7 @@ function CoinDetailPage() {
           </Card>
 
           {/* Owner/Generator */}
-          <Card className="animate-slide-up" style={{ animationDelay: '350ms' }}>
+          <Card>
             <CardHeader>
               <CardTitle>
                 <User className="w-5 h-5 inline mr-2" />
@@ -369,32 +341,22 @@ function CoinDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-white/60 font-mono text-sm">Wallet:</span>
-                <span className="font-bold font-mono text-sm">{coin.ownerAddress}</span>
-              </div>
-              {coin.combo && (
+              {coin.walletAddress && (
+                <div className="flex justify-between items-center">
+                  <span className="text-white/60 font-mono text-sm">Wallet:</span>
+                  <span className="font-bold font-mono text-sm break-all">{coin.walletAddress}</span>
+                </div>
+              )}
+              {coin.combos && (
                 <div className="pt-3 border-t border-white/10">
-                  <p className="text-sm text-white/60 mb-2">Random Combo:</p>
+                  <p className="text-sm text-white/60 mb-2">Combo:</p>
                   <div className="flex items-center gap-2 text-2xl">
-                    <span title={coin.combo.animalName}>{coin.combo.animal}</span>
+                    <span title={coin.combos.animal.name}>{coin.combos.animal.emoji}</span>
                     <span className="text-white/40">+</span>
-                    <span title={coin.combo.foodName}>{coin.combo.food}</span>
+                    <span title={coin.combos.food.name}>{coin.combos.food.emoji}</span>
                     <span className="text-white/40">+</span>
-                    <span title={coin.combo.vibeName}>{coin.combo.vibe}</span>
+                    <span title={coin.combos.vibe.name}>{coin.combos.vibe.emoji}</span>
                   </div>
-                </div>
-              )}
-              {coin.context && (
-                <div className="pt-3 border-t border-white/10">
-                  <p className="text-sm text-white/60 mb-2">Context:</p>
-                  <p className="text-white/80 italic">"{coin.context}"</p>
-                </div>
-              )}
-              {coin.prompt && (
-                <div className="pt-3 border-t border-white/10">
-                  <p className="text-sm text-white/60 mb-2">Prompt:</p>
-                  <p className="text-white/80 italic">"{coin.prompt}"</p>
                 </div>
               )}
             </CardContent>
@@ -402,7 +364,7 @@ function CoinDetailPage() {
 
           {/* Marketing Strategy */}
           {coin.marketing && (
-            <Card className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '400ms' }}>
+            <Card className="lg:col-span-2">
               <CardHeader>
                 <CardTitle>Marketing Strategy</CardTitle>
                 <CardDescription>AI-generated go-to-market plan</CardDescription>

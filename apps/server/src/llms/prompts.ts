@@ -1,6 +1,6 @@
-import { GenCoinReq, RandomCoinReq } from '../coins/schemas'
 import { Prompt } from './schemas'
 import { z } from 'zod'
+import { GenReq } from '../coins/schemas.ts'
 
 export const withEnforcedSchema = <T extends z.ZodSchema>(prompt: Prompt, outputFormat: z.infer<T>): Prompt => {
   const { text: basePrompt } = prompt
@@ -24,14 +24,13 @@ export const withEnforcedSchema = <T extends z.ZodSchema>(prompt: Prompt, output
   }
 }
 
-export const toLLMPrompt = (req: RandomCoinReq): Prompt => {
-  const { prompt: userPrompt, combos } = req
-  const comboStr = Object.keys(combos).map((x) => {
-    return `${x}: ${combos[x as keyof typeof combos].emoji} (${combos[x as keyof typeof combos].name})`
-  })
+export const toLLMPrompt = (req: GenReq): Prompt => {
+  const { prompt: userPrompt } = req
+  const { text } = assembleModeParts(req)
+
   const prompt = `you're a degen meme coin creator. 3am energy drink hours. you've been rugged 47 times but still believe.
 
-  just rolled: ${comboStr}
+  ${text}
   ${userPrompt ? `vibe: "${userPrompt}"\n` : ''}
   create a meme coin that makes degens NEED to ape.
   
@@ -47,5 +46,27 @@ export const toLLMPrompt = (req: RandomCoinReq): Prompt => {
 
   return {
     text: prompt,
+  }
+}
+
+const assembleModeParts = (req: GenReq) => {
+  switch (req.mode) {
+    case 'random':
+      const { combos } = req
+      const comboStr = Object.keys(combos).map((x) => {
+        return `${x}: ${combos[x as keyof typeof combos].emoji} (${combos[x as keyof typeof combos].name})`
+      })
+      return {
+        text: `just rolled: ${comboStr}`,
+      }
+    case 'prompt':
+      return {}
+    case 'social':
+      const { postUrl, postContent } = req
+      return {
+        text: `post url: ${postUrl}\npost content: ${postContent}`,
+      }
+    default:
+      return {}
   }
 }

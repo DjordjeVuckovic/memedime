@@ -1,11 +1,11 @@
-import { useMemo } from 'react'
+import { type ReactNode, useMemo } from 'react'
 import { ConnectionProvider, WalletProvider as SolanaWalletProvider } from '@solana/wallet-adapter-react'
 import { TorusWalletAdapter, CoinbaseWalletAdapter} from '@solana/wallet-adapter-wallets'
 import { WalletAdapterNetwork, type WalletError } from '@solana/wallet-adapter-base'
 import { clusterApiUrl } from '@solana/web3.js'
 
 interface WalletProviderProps {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {

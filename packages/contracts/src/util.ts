@@ -2,9 +2,10 @@ import {z} from "zod";
 
 export const percentageField = z.preprocess(
   (val) => {
-    if (typeof val === 'number') return `${val}%`
-    if (typeof val === 'string') return val
+    if (typeof val === 'string') {
+      return val.endsWith('%') ? val.slice(0, -1) : val
+    }
     return val
   },
-  z.string().optional()
+  z.string().nullish()
 )

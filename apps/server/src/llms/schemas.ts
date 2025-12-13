@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { percentageField } from '../shared/zod'
-
+import { percentageField } from '@memedime/contracts'
 export const LLMProviderSchema = z.enum([
   'xai',
   'openai',

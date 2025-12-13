@@ -1,6 +1,6 @@
 {
-  "id": "cb15f029-3f2e-4fb3-ac67-80cb901f26ee",
-  "prevId": "83455aa7-f439-4f6a-93cb-733f0dcac63a",
+  "id": "8164d155-7e6d-4bee-a819-b2cef67cecde",
+  "prevId": "daa98c47-24a6-4f4f-b44e-79d07a73bf58",
   "version": "6",
   "dialect": "sqlite",
   "tables": {
@@ -105,21 +105,27 @@
           "notNull": false,
           "autoincrement": false
         },
+        "wallet_address": {
+          "name": "wallet_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'0x0000000000000000000000000000000000000000'"
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "autoincrement": false
         },
         "deleted_at": {
           "name": "deleted_at",

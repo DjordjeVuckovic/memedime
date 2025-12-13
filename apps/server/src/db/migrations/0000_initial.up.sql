@@ -13,8 +13,9 @@ CREATE TABLE `coins` (
 	`mode` text NOT NULL,
 	`combos` text,
 	`prompt` text,
-	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	`updated_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`wallet_address` text DEFAULT '0x0000000000000000000000000000000000000000',
+	`created_at` integer NOT NULL,
+	`updated_at` integer NOT NULL,
 	`deleted_at` integer
 );
 --> statement-breakpoint

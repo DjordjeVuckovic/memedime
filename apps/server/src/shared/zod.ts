@@ -12,12 +12,3 @@ export const getSchemaDescription = <T extends z.ZodSchema>(
     jsonSchema: jsonSpec,
   }
 }
-
-export const percentageField = z
-  .union([z.number(), z.string(), z.undefined()])
-  .transform((val) => {
-    if (val === undefined) return undefined
-    if (typeof val === 'number') return `${val}%`
-    return val
-  })
-  .optional()

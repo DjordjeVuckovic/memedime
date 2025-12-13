@@ -1,4 +1,3 @@
-import { sql } from 'drizzle-orm'
 import { text, integer, sqliteTable, index } from 'drizzle-orm/sqlite-core'
 
 export const coins = sqliteTable(
@@ -16,14 +15,14 @@ export const coins = sqliteTable(
     marketingFeePercentage: text('marketing_fee_percentage'),
     communityFeePercentage: text('community_fee_percentage'),
     mode: text('mode').notNull(),
-    combos: text('combos'), // JSON stringified array
+    combos: text('combos', { mode: 'json' }),
     prompt: text('prompt'),
     walletAddress: text('wallet_address').default('0x0000000000000000000000000000000000000000'),
     createdAt: integer('created_at', { mode: 'timestamp' })
-      .default(sql`CURRENT_TIMESTAMP`)
+      .$defaultFn(() => new Date())
       .notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' })
-      .default(sql`CURRENT_TIMESTAMP`)
+      .$onUpdateFn(() => new Date())
       .notNull(),
     deletedAt: integer('deleted_at', { mode: 'timestamp' }),
   },
@@ -35,4 +34,3 @@ export const coins = sqliteTable(
 
 export type Coin = typeof coins.$inferSelect
 export type NewCoin = typeof coins.$inferInsert
-

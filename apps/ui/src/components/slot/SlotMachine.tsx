@@ -1,6 +1,16 @@
 import { useState, forwardRef, useImperativeHandle } from 'react'
 import { motion } from 'framer-motion'
-import { ANIMALS, FOODS, VIBES, type EmojiData } from './emoji-data'
+import { emojis } from '@memedime/contracts'
+
+interface EmojiData {
+  emoji: string
+  name: string
+  weight?: number
+}
+
+const ANIMALS: EmojiData[] = emojis.animals
+const FOODS: EmojiData[] = emojis.foods
+const VIBES: EmojiData[] = emojis.vibes
 
 interface SlotReelProps {
   emojis: EmojiData[]
@@ -71,11 +81,12 @@ function SlotReel({ emojis, isSpinning, finalIndex, delay = 0 }: SlotReelProps) 
 }
 
 interface SlotMachineProps {
-  onSpin?: (result: { animal: EmojiData; food: EmojiData; vibe: EmojiData }) => void
+  onSpin?: () => void
 }
 
 export interface SlotMachineRef {
   spin: () => void
+  setFinalResult: (combos: { animal: EmojiData; food: EmojiData; vibe: EmojiData }) => void
   isSpinning: boolean
 }
 
@@ -92,7 +103,7 @@ export const SlotMachine = forwardRef<SlotMachineRef, SlotMachineProps>(({ onSpi
 
     setIsSpinning(true)
 
-    // Generate random results
+    // Generate random results for visual effect only
     const newResults = {
       animal: Math.floor(Math.random() * ANIMALS.length),
       food: Math.floor(Math.random() * FOODS.length),
@@ -104,20 +115,29 @@ export const SlotMachine = forwardRef<SlotMachineRef, SlotMachineProps>(({ onSpi
       setResults(newResults)
       setIsSpinning(false)
 
-      // Call callback with results
-      if (onSpin) {
-        onSpin({
-          animal: ANIMALS[newResults.animal],
-          food: FOODS[newResults.food],
-          vibe: VIBES[newResults.vibe],
-        })
-      }
+      // Call callback when spin completes (no data sent - backend generates combos)
+      onSpin?.()
     }, 2500)
   }
 
-  // Expose spin method and isSpinning state to parent
+  // Method to set final result from backend
+  const setFinalResult = (combos: { animal: EmojiData; food: EmojiData; vibe: EmojiData }) => {
+    // Find indices of the backend-generated emojis
+    const animalIndex = ANIMALS.findIndex((e) => e.emoji === combos.animal.emoji)
+    const foodIndex = FOODS.findIndex((e) => e.emoji === combos.food.emoji)
+    const vibeIndex = VIBES.findIndex((e) => e.emoji === combos.vibe.emoji)
+
+    setResults({
+      animal: animalIndex >= 0 ? animalIndex : 0,
+      food: foodIndex >= 0 ? foodIndex : 0,
+      vibe: vibeIndex >= 0 ? vibeIndex : 0,
+    })
+  }
+
+  // Expose spin method, setFinalResult, and isSpinning state to parent
   useImperativeHandle(ref, () => ({
     spin: handleSpin,
+    setFinalResult,
     isSpinning,
   }))
 

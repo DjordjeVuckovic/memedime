@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { SlotMachine, type SlotMachineRef } from '@/components/slot/SlotMachine'
 import { CustomizationOptions, type CoinVibe } from '@/components/generate/CustomizationOptions'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
-import type { EmojiData } from '@/components/slot/emoji-data'
+import { useGenerateCoin } from '@/routes/coins/queries'
 
 export const Route = createFileRoute('/generate/random')({
   component: RandomModePage,
@@ -16,63 +16,87 @@ function RandomModePage() {
   const [vibe, setVibe] = useState<CoinVibe>('')
   const slotMachineRef = useRef<SlotMachineRef>(null)
   const [isSpinning, setIsSpinning] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [spinResult, setSpinResult] = useState<{
-    animal: EmojiData
-    food: EmojiData
-    vibe: EmojiData
-  } | null>(null)
+  const [animationComplete, setAnimationComplete] = useState(false)
+  const [showResult, setShowResult] = useState(false)
 
-  const handleRandomComplete = (result: {
-    animal: EmojiData
-    food: EmojiData
-    vibe: EmojiData
-  }) => {
-    console.log('Random spin complete:', result)
+  const generateMutation = useGenerateCoin({
+    onError: (error) => {
+      console.error('Failed to generate coin:', error)
+      alert(`Failed to generate coin: ${error.message}`)
+      setIsSpinning(false)
+      setAnimationComplete(false)
+      setShowResult(false)
+    },
+  })
+
+  // When both animation completes AND API returns, show the backend combos in slots
+  useEffect(() => {
+    if (animationComplete && generateMutation.isSuccess && generateMutation.data && !showResult) {
+      // Update slot machine to display backend-generated combos
+      if (generateMutation.data.combos && slotMachineRef.current) {
+        slotMachineRef.current.setFinalResult(generateMutation.data.combos)
+      }
+
+      // Show success preview after a brief moment to see the final combos
+      setTimeout(() => {
+        setShowResult(true)
+      }, 800)
+    }
+  }, [animationComplete, generateMutation.isSuccess, generateMutation.data, showResult])
+
+  const handleRandomComplete = () => {
+    console.log('Random spin animation complete')
+    setAnimationComplete(true)
     setIsSpinning(false)
-    setSpinResult(result)
-
-    // Simulate API call delay (2 seconds), then show success
-    setTimeout(() => {
-      setShowSuccess(true)
-    }, 2000)
   }
 
   const handleGenerate = () => {
     setIsSpinning(true)
-    setShowSuccess(false)
+    setAnimationComplete(false)
+    setShowResult(false)
+    generateMutation.reset()
+
+    // Start slot machine animation
     slotMachineRef.current?.spin()
+
+    // Fire API request immediately (small delay for better UX)
+    setTimeout(() => {
+      generateMutation.mutate({
+        mode: 'random',
+        prompt: context.trim() || undefined,
+      })
+    }, 500)
   }
 
   const handleViewDetails = () => {
-    // Navigate to coin detail page
-    navigate({ to: '/coins/$coinId', params: { coinId: '1' } })
+    if (generateMutation.data) {
+      navigate({ to: '/coins/$coinId', params: { coinId: String(generateMutation.data.id) } })
+    }
   }
 
   const handleGenerateAnother = () => {
-    setShowSuccess(false)
-    setSpinResult(null)
+    setShowResult(false)
+    setAnimationComplete(false)
+    generateMutation.reset()
   }
 
-  // Mock coin data for SuccessPreview
-  const mockCoin = spinResult ? {
-    name: 'CAPYBARA PIZZA QUEST',
-    ticker: '$CAPYPIZZA',
-    tagline: 'AFK farming with diamond paws',
-    combos: {
-      animal: { emoji: spinResult.animal.emoji, name: spinResult.animal.name },
-      food: { emoji: spinResult.food.emoji, name: spinResult.food.name },
-      vibe: { emoji: spinResult.vibe.emoji, name: spinResult.vibe.name },
-    },
-  } : null
+  // Coin data from mutation for SuccessPreview
+  const generatedCoin = generateMutation.data
+    ? {
+        name: generateMutation.data.name,
+        ticker: generateMutation.data.ticker,
+        tagline: generateMutation.data.tagline,
+        combos: generateMutation.data.combos!,
+      }
+    : null
 
   return (
     <>
       {/* Show Success Preview after generation */}
-      {showSuccess && mockCoin ? (
+      {showResult && generatedCoin ? (
         <div className="py-12">
           <SuccessPreview
-            coin={mockCoin}
+            coin={generatedCoin}
             onViewDetails={handleViewDetails}
             onGenerateAnother={handleGenerateAnother}
           />
@@ -104,9 +128,13 @@ function RandomModePage() {
               glow
               className="hover-shake w-full max-w-md"
               onClick={handleGenerate}
-              disabled={isSpinning}
+              disabled={isSpinning || generateMutation.isPending}
             >
-              {isSpinning ? 'SPINNING...' : 'GENERATE RANDOM COIN'}
+              {isSpinning
+                ? 'SPINNING...'
+                : generateMutation.isPending
+                  ? 'GENERATING...'
+                  : 'GENERATE RANDOM COIN'}
             </Button>
           </div>
         </>

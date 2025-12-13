@@ -1,102 +1,91 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
-import { Search, TrendingUp, Clock, Sparkles } from 'lucide-react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useMemo, useCallback, useState, useEffect } from 'react'
+import { Search, TrendingUp, Clock, Sparkles, Loader2, AlertCircle } from 'lucide-react'
+import { useSearchCoins } from './queries'
+import { useDebounce } from '@/lib/hooks'
+import { ModeSchema, SortBySchema, type Mode } from '@memedime/contracts'
+import { formatWalletAddress } from '@/wallet/util.ts'
+import { z } from 'zod'
+
+// Search params schema with validation
+const CoinsSearchSchema = z.object({
+  q: z.string().max(200).optional().catch(undefined),
+  mode: ModeSchema.optional().catch(undefined),
+  sortBy: SortBySchema.optional().default('recent'),
+})
+
+type CoinsSearch = z.infer<typeof CoinsSearchSchema>
 
 export const Route = createFileRoute('/coins/')({
+  validateSearch: (search: Record<string, unknown>): CoinsSearch => {
+    return CoinsSearchSchema.parse(search)
+  },
   component: CoinsCollectionPage,
 })
 
-// Mock data - replace with actual API call
-const mockCoins = [
-  {
-    id: '1',
-    name: 'CAPYBARA PIZZA QUEST',
-    ticker: '$CAPYPIZZA',
-    tagline: 'AFK farming with diamond paws',
-    description: 'The first gaming memecoin that combines capybara vibes with pizza rewards',
-    supply: '420,690,000,000',
-    createdAt: '2024-12-04T10:30:00Z',
-    ownerAddress: '7xKX...4Ry9',
-    mode: 'random',
-  },
-  {
-    id: '2',
-    name: 'DOGE TACO MOON',
-    ticker: '$DOGOTACO',
-    tagline: 'Much taco, very moon',
-    description: 'When dogs meet tacos in space, magic happens',
-    supply: '1,000,000,000',
-    createdAt: '2024-12-04T09:15:00Z',
-    ownerAddress: '9aB2...8Xm5',
-    mode: 'prompt',
-  },
-  {
-    id: '3',
-    name: 'UNICORN SUSHI ROCKET',
-    ticker: '$UNISUSHI',
-    tagline: 'Rainbow rolls to the stars',
-    description: 'Mythical creatures eating sushi while riding rockets',
-    supply: '777,777,777',
-    createdAt: '2024-12-04T08:00:00Z',
-    ownerAddress: '3pQw...6Ty1',
-    mode: 'social',
-  },
-  {
-    id: '4',
-    name: 'FROG BURGER DIAMOND',
-    ticker: '$FROGBURG',
-    tagline: 'Hopping to wealth one patty at a time',
-    description: 'Frogs serving diamond-tier burgers in the metaverse',
-    supply: '690,420,000',
-    createdAt: '2024-12-03T22:00:00Z',
-    ownerAddress: '5hNm...2Rk9',
-    mode: 'random',
-  },
-  {
-    id: '5',
-    name: 'PENGUIN RAMEN FIRE',
-    ticker: '$PENRAMEN',
-    tagline: 'Ice cold penguins serving hot ramen',
-    description: 'Antarctic penguins bringing the heat with spicy ramen NFTs',
-    supply: '100,000,000',
-    createdAt: '2024-12-03T18:30:00Z',
-    ownerAddress: '8vLp...3Ws7',
-    mode: 'prompt',
-  },
-  {
-    id: '6',
-    name: 'MONKEY PIZZA ROCKET',
-    ticker: '$MONKPIZZA',
-    tagline: 'Apes together deliver pizza',
-    description: 'Decentralized pizza delivery powered by space monkeys',
-    supply: '888,888,888',
-    createdAt: '2024-12-03T14:15:00Z',
-    ownerAddress: '4xTr...9Pk4',
-    mode: 'social',
-  },
-]
-
 function CoinsCollectionPage() {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [filterMode, setFilterMode] = useState<'all' | 'random' | 'prompt' | 'social'>('all')
-  const [sortBy, setSortBy] = useState<'recent' | 'popular'>('recent')
+  const navigate = useNavigate({ from: '/coins' })
+  const searchParams = Route.useSearch()
 
-  // Filter and sort coins
-  const filteredCoins = mockCoins
-    .filter((coin) => {
-      const matchesSearch =
-        coin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        coin.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        coin.tagline.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesMode = filterMode === 'all' || coin.mode === filterMode
-      return matchesSearch && matchesMode
-    })
-    .sort((a, b) => {
-      if (sortBy === 'recent') {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      }
-      return b.views - a.views
-    })
+  // Extract and sanitize search params
+  const searchQuery = searchParams.q ?? ''
+  const filterMode = searchParams.mode ?? null
+  const sortBy = searchParams.sortBy ?? 'recent'
+
+  // Local search input state
+  const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery)
+
+  // Debounce the local search query
+  const debouncedSearchQuery = useDebounce(localSearchQuery, 300)
+
+  // Sync local state with URL params on initial load
+  useEffect(() => {
+    setLocalSearchQuery(searchQuery)
+  }, [searchQuery])
+
+  // Update URL when debounced value changes
+  useEffect(() => {
+    if (debouncedSearchQuery !== searchQuery) {
+      navigate({
+        search: (prev) => ({
+          ...prev,
+          q: debouncedSearchQuery || undefined,
+        }),
+      })
+    }
+  }, [debouncedSearchQuery, searchQuery, navigate])
+
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useSearchCoins(searchQuery, filterMode ?? undefined, sortBy)
+
+  const coins = useMemo(() => {
+    return data?.pages?.flatMap((page) => page.items) ?? []
+  }, [data?.pages])
+
+  // Check if currently debouncing
+  const isDebouncing = localSearchQuery !== debouncedSearchQuery
+
+  const updateSearch = useCallback(
+    (updates: Partial<CoinsSearch>) => {
+      navigate({
+        search: (prev) => ({ ...prev, ...updates }),
+      })
+    },
+    [navigate],
+  )
+
+  // Handle search input change
+  const handleSearchChange = useCallback((value: string) => {
+    const sanitized = value.slice(0, 200) // Max 200 chars
+    setLocalSearchQuery(sanitized)
+  }, [])
 
   const getModeColor = (mode: string) => {
     switch (mode) {
@@ -111,43 +100,35 @@ function CoinsCollectionPage() {
     }
   }
 
-  const getModeIcon = (mode: string) => {
-    switch (mode) {
-      case 'random':
-        return '🎲'
-      case 'prompt':
-        return '✍️'
-      case 'social':
-        return '💬'
-      default:
-        return '🎯'
-    }
-  }
-
   return (
     <div className="min-h-screen py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-6xl sm:text-7xl font-black mb-6 uppercase tracking-tight">
-            <span className="inline-block bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent animate-pulse-grow">
+            <span className="inline-block bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent animate-pulse-grow">
               COIN VAULT
             </span>
           </h1>
           <p className="text-2xl text-white/70 font-bold font-mono">
-            {filteredCoins.length} LEGENDARY COINS
+            {isLoading ? 'LOADING...' : `${coins.length} LEGENDARY COINS`}
           </p>
         </div>
 
         {/* Search Bar */}
         <div className="relative max-w-2xl mx-auto mb-12">
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-purple-400" />
+          {isDebouncing && (
+            <Loader2 className="absolute right-6 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-400 animate-spin" />
+          )}
           <input
             type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={localSearchQuery}
+            onChange={(e) => handleSearchChange(e.target.value)}
             placeholder="Search the vault..."
-            className="w-full pl-16 pr-6 py-5 bg-black/60 border-4 border-purple-400/40 rounded-2xl text-white text-lg font-mono
+            maxLength={200}
+            aria-label="Search coins"
+            className="w-full pl-16 pr-14 py-5 bg-black/60 border-4 border-purple-400/40 rounded-2xl text-white text-lg font-mono
                      focus:outline-none focus:border-purple-400 focus:shadow-[0_0_30px_rgba(192,132,252,0.3)] transition-all duration-300
                      placeholder:text-white/30"
           />
@@ -157,16 +138,16 @@ function CoinsCollectionPage() {
         <div className="flex justify-center mb-8">
           <div className="inline-flex bg-black/60 rounded-2xl p-2 border-4 border-white/10">
             {[
-              { id: 'all', label: 'ALL', icon: '🌟', color: 'rgb(168, 85, 247)' },
-              { id: 'random', label: 'RANDOM', icon: '🎲', color: 'rgb(251, 191, 36)' },
-              { id: 'prompt', label: 'PROMPT', icon: '✍️', color: 'rgb(34, 211, 238)' },
-              { id: 'social', label: 'SOCIAL', icon: '💬', color: 'rgb(192, 132, 252)' },
+              { id: null, label: 'ALL', icon: '🌟', color: 'rgb(168, 85, 247)' },
+              { id: 'random' as Mode, label: 'RANDOM', icon: '🎲', color: 'rgb(251, 191, 36)' },
+              { id: 'prompt' as Mode, label: 'PROMPT', icon: '✍️', color: 'rgb(34, 211, 238)' },
+              { id: 'social' as Mode, label: 'SOCIAL', icon: '💬', color: 'rgb(192, 132, 252)' },
             ].map((mode) => {
               const isActive = filterMode === mode.id
               return (
                 <button
-                  key={mode.id}
-                  onClick={() => setFilterMode(mode.id as any)}
+                  key={mode.label}
+                  onClick={() => updateSearch({ mode: mode.id ?? undefined })}
                   className={`
                     px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wide transition-all duration-300
                     ${
@@ -196,7 +177,7 @@ function CoinsCollectionPage() {
         <div className="flex justify-center mb-12">
           <div className="inline-flex gap-3">
             <button
-              onClick={() => setSortBy('recent')}
+              onClick={() => updateSearch({ sortBy: 'recent' })}
               className={`
                 flex items-center gap-2 px-6 py-3 rounded-xl font-bold uppercase text-sm transition-all duration-300
                 ${
@@ -210,61 +191,78 @@ function CoinsCollectionPage() {
               RECENT
             </button>
             <button
-              onClick={() => setSortBy('popular')}
+              onClick={() => updateSearch({ sortBy: 'relevance' })}
               className={`
                 flex items-center gap-2 px-6 py-3 rounded-xl font-bold uppercase text-sm transition-all duration-300
                 ${
-                  sortBy === 'popular'
+                  sortBy === 'relevance'
                     ? 'bg-yellow-500/20 text-yellow-400 border-2 border-yellow-400 shadow-[0_0_20px_rgba(251,191,36,0.3)]'
                     : 'bg-black/40 text-white/50 border-2 border-white/10 hover:border-white/30'
                 }
               `}
             >
               <TrendingUp className="w-4 h-4" />
-              POPULAR
+              RELEVANCE
             </button>
           </div>
         </div>
 
-        {/* Coins Grid */}
-        {filteredCoins.length === 0 ? (
+        {/* Loading State */}
+        {isLoading && (
+          <div className="text-center py-20">
+            <Loader2 className="w-16 h-16 mx-auto mb-4 text-purple-400 animate-spin" />
+            <p className="text-2xl font-black text-white/40">LOADING COINS...</p>
+          </div>
+        )}
+
+        {/* Error State */}
+        {isError && (
+          <div className="text-center py-20">
+            <div className="flex flex-col items-center gap-4">
+              <AlertCircle className="w-16 h-16 text-red-400" />
+              <p className="text-3xl font-black text-red-400 mb-2">ERROR LOADING COINS</p>
+              <p className="text-white/40 font-mono max-w-md">
+                {error instanceof Error ? error.message : 'Please try again later'}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-4 px-6 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400
+                         font-bold uppercase rounded-xl transition-all duration-300 border-2 border-red-400"
+              >
+                Reload Page
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !isError && coins.length === 0 && (
           <div className="text-center py-20">
             <p className="text-3xl font-black text-white/20 mb-2">VAULT EMPTY</p>
             <p className="text-white/40 font-mono">No coins match your search</p>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredCoins.map((coin, index) => {
-              // Cycle through colors when "all" filter is active
-              const getCardColor = () => {
-                if (filterMode === 'all') {
-                  const colors = [
-                    'rgb(251, 191, 36)', // yellow
-                    'rgb(34, 211, 238)', // cyan
-                    'rgb(192, 132, 252)', // purple
-                  ]
-                  return colors[index % colors.length]
-                }
-                return getModeColor(coin.mode)
-              }
-              const modeColor = getCardColor()
+        )}
+
+        {/* Coins Grid */}
+        {!isLoading && !isError && coins.length > 0 && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {coins.map((coin) => {
+              // Use coin's mode color when "all" filter is active, otherwise use filter mode color
+              const modeColor = filterMode ? getModeColor(filterMode) : getModeColor(coin.mode)
 
               return (
                 <Link
                   key={coin.id}
                   to="/coins/$coinId"
-                  params={{ coinId: coin.id }}
+                  params={{ coinId: coin.id.toString() }}
                   className="group block"
-                  style={{
-                    animation: 'slideUpFade 0.6s ease-out forwards',
-                    animationDelay: `${index * 0.1}s`,
-                    opacity: 0,
-                  }}
                 >
                   {/* 3D Card Container */}
                   <div
-                    className="relative h-full perspective-1000"
+                    className="relative h-full"
                     style={{
+                      perspective: '1000px',
                       transform: 'translateZ(0)',
                     }}
                   >
@@ -331,7 +329,7 @@ function CoinsCollectionPage() {
                               style={{ backgroundColor: modeColor }}
                             />
                             <span className="text-xs text-white/30 font-mono">
-                              {coin.ownerAddress}
+                              {formatWalletAddress(coin.walletAddress)}
                             </span>
                           </div>
                           <Sparkles className="w-5 h-5 text-white/20 group-hover:text-yellow-400 transition-colors" />
@@ -350,26 +348,33 @@ function CoinsCollectionPage() {
                 </Link>
               )
             })}
-          </div>
+            </div>
+
+            {/* Load More Button */}
+            {hasNextPage && (
+              <div className="flex justify-center mt-12">
+                <button
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="px-8 py-4 bg-purple-500 hover:bg-purple-600 disabled:bg-purple-500/50
+                           text-white font-black uppercase rounded-xl transition-all duration-300
+                           shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]
+                           disabled:cursor-not-allowed"
+                >
+                  {isFetchingNextPage ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      LOADING MORE...
+                    </span>
+                  ) : (
+                    'LOAD MORE COINS'
+                  )}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
-
-      <style>{`
-        @keyframes slideUpFade {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-      `}</style>
     </div>
   )
 }

@@ -4,7 +4,15 @@ import { appEnv } from '../shared/env'
 import { Hono } from 'hono'
 import { validator as zValidator, resolver, describeRoute } from 'hono-openapi'
 import { z } from 'zod'
-import { CoinRespSchema, GenCoinReqSchema, ModeSchema } from '@memedime/contracts'
+import {
+  CoinRespSchema,
+  CoinsResp,
+  CoinsRespSchema,
+  GenCoinReqUnionSchema,
+  ModeSchema,
+  SearchReqSchema,
+  SortBySchema,
+} from '@memedime/contracts'
 
 const llmClient = createLLMClient({
   provider: appEnv.LLM_PROVIDER,
@@ -33,16 +41,12 @@ memeRouter.post(
       },
     },
   }),
-  zValidator('json', GenCoinReqSchema),
+  zValidator('json', GenCoinReqUnionSchema),
   async (c) => {
     const body = c.req.valid('json')
 
-    const modeQuery = c.req.query('mode') || 'random'
-    const mode = ModeSchema.parse(modeQuery)
-
     const coin = await generateCoin({
       req: body,
-      mode,
       llmClient,
     })
 
@@ -93,7 +97,7 @@ memeRouter.get(
       {
         name: 'q',
         in: 'query',
-        required: true,
+        required: false,
         description: 'The search query string.',
         schema: {
           type: 'string',
@@ -109,13 +113,23 @@ memeRouter.get(
           enum: ModeSchema.options,
         },
       },
+      {
+        name: 'sortBy',
+        in: 'query',
+        required: false,
+        description: 'Optional sort order for the search results.',
+        schema: {
+          type: 'string',
+          enum: SortBySchema.options,
+        },
+      },
     ],
     responses: {
       200: {
         description: 'Successful response with a list of matching coins.',
         content: {
           'application/json': {
-            schema: resolver(CoinRespSchema.array()),
+            schema: resolver(CoinsRespSchema),
           },
         },
       },
@@ -124,19 +138,25 @@ memeRouter.get(
       },
     },
   }),
-  zValidator(
-    'query',
-    z.object({
-      q: z.string(),
-      mode: ModeSchema.optional(),
-    }),
-  ),
+  zValidator('query', SearchReqSchema),
   async (c) => {
-    const { q, mode } = c.req.valid('query')
+    const { q, mode, sortBy, limit, cursor } = c.req.valid('query')
 
-    const coins = await searchCoins(q, mode)
+    const { coins, nextCursor } = await searchCoins({
+      q,
+      mode,
+      sortBy,
+      limit,
+      cursor,
+    })
 
-    return c.json(coins, 200)
+    return c.json(
+      {
+        items: coins,
+        nextCursor,
+      } as CoinsResp,
+      200,
+    )
   },
 )
 

@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1765327966665,
+      "when": 1765582932052,
       "tag": "0000_initial.up",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "6",
-      "when": 1765328354307,
+      "when": 1765583316408,
       "tag": "0001_fts.up",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1765447648813,
-      "tag": "0002_coin_wallet.up",
       "breakpoints": true
     }
   ]
