@@ -212,6 +212,26 @@ code,
   }
 }
 
+@keyframes fall {
+  0% {
+    top: -10%;
+    opacity: 1;
+  }
+  100% {
+    top: 110%;
+    opacity: 0.3;
+  }
+}
+
+@keyframes coin-rotate {
+  0% {
+    transform: rotate(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotate(var(--rotation, 360deg)) rotateY(720deg);
+  }
+}
+
 /* Animation utilities */
 .animate-float {
   animation: float 3s ease-in-out infinite;
@@ -249,6 +269,15 @@ code,
   animation: marquee 30s linear infinite;
 }
 
+.animate-fall {
+  animation: fall linear forwards;
+}
+
+.coin-spin {
+  animation: coin-rotate linear;
+  animation-fill-mode: forwards;
+}
+
 /* Hover effects */
 .hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -266,6 +295,43 @@ code,
 /* Smooth transitions */
 * {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* View Transitions API - Smooth route changes */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(root) {
+  animation-name: fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: fade-in;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Custom scrollbar */

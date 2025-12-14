@@ -1,10 +1,15 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState, useRef, useEffect } from 'react'
+import { Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Toast, useToast } from '@/components/ui'
 import { SlotMachine, type SlotMachineRef } from '@/components/slot/SlotMachine'
 import { CustomizationOptions, type CoinVibe } from '@/components/generate/CustomizationOptions'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
 import { useGenerateCoin } from '@/routes/coins/queries'
+import { useWalletContext } from '@/wallet/WalletContext'
+
+const PREVIEW_DELAY = 2_000
 
 export const Route = createFileRoute('/generate/random')({
   component: RandomModePage,
@@ -12,6 +17,8 @@ export const Route = createFileRoute('/generate/random')({
 
 function RandomModePage() {
   const navigate = useNavigate()
+  const { connected } = useWalletContext()
+  const { toastState, showToast, hideToast } = useToast()
   const [context, setContext] = useState('')
   const [vibe, setVibe] = useState<CoinVibe>('')
   const slotMachineRef = useRef<SlotMachineRef>(null)
@@ -22,25 +29,27 @@ function RandomModePage() {
   const generateMutation = useGenerateCoin({
     onError: (error) => {
       console.error('Failed to generate coin:', error)
-      alert(`Failed to generate coin: ${error.message}`)
+      showToast(`FAILED TO GENERATE COIN: ${error.message.toUpperCase()}`, 'error')
       setIsSpinning(false)
       setAnimationComplete(false)
       setShowResult(false)
     },
   })
 
-  // When both animation completes AND API returns, show the backend combos in slots
+  // When both animation completes AND API returns, update slot machine and show result
   useEffect(() => {
-    if (animationComplete && generateMutation.isSuccess && generateMutation.data && !showResult) {
+    let timeout: NodeJS.Timeout
+    if (animationComplete && generateMutation.isSuccess && !showResult) {
       // Update slot machine to display backend-generated combos
       if (generateMutation.data.combos && slotMachineRef.current) {
         slotMachineRef.current.setFinalResult(generateMutation.data.combos)
       }
-
-      // Show success preview after a brief moment to see the final combos
-      setTimeout(() => {
-        setShowResult(true)
-      }, 800)
+      timeout = setTimeout(() => setShowResult(true), PREVIEW_DELAY)
+    }
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
     }
   }, [animationComplete, generateMutation.isSuccess, generateMutation.data, showResult])
 
@@ -51,6 +60,12 @@ function RandomModePage() {
   }
 
   const handleGenerate = () => {
+    // Auth guard - check if wallet is connected
+    if (!connected) {
+      showToast('PLEASE CONNECT YOUR WALLET FIRST!', 'error')
+      return
+    }
+
     setIsSpinning(true)
     setAnimationComplete(false)
     setShowResult(false)
@@ -59,18 +74,15 @@ function RandomModePage() {
     // Start slot machine animation
     slotMachineRef.current?.spin()
 
-    // Fire API request immediately (small delay for better UX)
-    setTimeout(() => {
-      generateMutation.mutate({
-        mode: 'random',
-        prompt: context.trim() || undefined,
-      })
-    }, 500)
+    generateMutation.mutate({
+      mode: 'random',
+      prompt: context.trim() || undefined,
+    })
   }
 
   const handleViewDetails = () => {
     if (generateMutation.data) {
-      navigate({ to: '/coins/$coinId', params: { coinId: String(generateMutation.data.id) } })
+      void navigate({ to: '/coins/$coinId', params: { coinId: String(generateMutation.data.id) } })
     }
   }
 
@@ -128,17 +140,23 @@ function RandomModePage() {
               glow
               className="hover-shake w-full max-w-md"
               onClick={handleGenerate}
-              disabled={isSpinning || generateMutation.isPending}
+              disabled={!connected || isSpinning || generateMutation.isPending}
             >
+              <Sparkles className="w-5 h-5" />
               {isSpinning
                 ? 'SPINNING...'
                 : generateMutation.isPending
                   ? 'GENERATING...'
-                  : 'GENERATE RANDOM COIN'}
+                  : !connected
+                    ? 'CONNECT WALLET TO GENERATE'
+                    : 'GENERATE RANDOM COIN'}
             </Button>
           </div>
         </>
       )}
+
+      {/* Toast Notifications */}
+      <Toast show={toastState.show} message={toastState.message} variant={toastState.variant} onClose={hideToast} />
     </>
   )
 }

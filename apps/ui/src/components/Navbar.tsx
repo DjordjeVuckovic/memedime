@@ -90,23 +90,26 @@ export default function Navbar() {
             </Link>
             <Link
               to="/coins"
+              search={{ sortBy: 'recent' }}
               className="text-sm font-bold text-white/80 hover:text-white transition-all duration-200 hover:scale-110 uppercase tracking-wide relative group"
             >
               Coins
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <a
-              href="#how-it-works"
+            <Link
+              to="/generate/random"
               className="text-sm font-bold text-white/80 hover:text-white transition-all duration-200 hover:scale-110 uppercase tracking-wide relative group"
             >
-              How It Works
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-yellow-400 group-hover:w-full transition-all duration-300"></span>
-            </a>
+              Generate
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-green-400 group-hover:w-full transition-all duration-300"></span>
+            </Link>
             <a
-              href="#stats"
+              href="https://docs.memedime.fun"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-sm font-bold text-white/80 hover:text-white transition-all duration-200 hover:scale-110 uppercase tracking-wide relative group"
             >
-              Stats
+              Docs
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-400 group-hover:w-full transition-all duration-300"></span>
             </a>
           </div>
@@ -146,24 +149,27 @@ export default function Navbar() {
           </Link>
           <Link
             to="/coins"
+            search={{ sortBy: 'recent' }}
             onClick={() => setMobileMenuOpen(false)}
             className="block px-4 py-2 text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
           >
             Coins
           </Link>
-          <a
-            href="#how-it-works"
+          <Link
+            to="/generate/random"
             onClick={() => setMobileMenuOpen(false)}
             className="block px-4 py-2 text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
           >
-            How It Works
-          </a>
+            Generate
+          </Link>
           <a
-            href="#stats"
+            href="https://docs.memedime.fun"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setMobileMenuOpen(false)}
             className="block px-4 py-2 text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
           >
-            Stats
+            Docs
           </a>
           <div className="pt-2">
             <Button

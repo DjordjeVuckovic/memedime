@@ -5,6 +5,7 @@ import { Scalar } from '@scalar/hono-api-reference'
 import memeRouter from './coins'
 import { openAPIRouteHandler } from 'hono-openapi'
 import { appEnv } from './shared/env'
+import { paymentMiddleware } from 'x402-hono'
 
 const app = new Hono({
   strict: false,
@@ -52,6 +53,25 @@ app.get(
     title: 'Memedime Server API',
   }),
 )
+
+// app.use(
+//   paymentMiddleware(
+//     '3uwxeEit5Y7MAtPHyzSkFHEbeM4omsat1BFdKyrCQg9p', // your receiving wallet address
+//     {
+//       // Route configurations for protected endpoints
+//       'POST /api/v1/coins': {
+//         price: '$0.10',
+//         network: 'solana-devnet',
+//         config: {
+//           description: 'Access to premium content',
+//         },
+//       },
+//     },
+//     {
+//       url: 'https://x402.org/facilitator', // Facilitator URL for Base Sepolia testnet.
+//     },
+//   ),
+// )
 
 // const markdown = await createMarkdownFromOpenApi(content)
 // app.get('/llms.txt', (c) => c.text(markdown))

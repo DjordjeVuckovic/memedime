@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { CoinConfetti } from '@/components/CoinConfetti'
+import { CONFETTI_DURATION } from '@/routes/generate/util.ts'
 
 interface SuccessPreviewProps {
   coin: {
@@ -19,13 +21,25 @@ interface SuccessPreviewProps {
   onGenerateAnother: () => void
 }
 
+const NAVIGATE_SECONDS = 5
+
 export function SuccessPreview({
   coin,
   onViewDetails,
   onGenerateAnother,
 }: SuccessPreviewProps) {
-  const [countdown, setCountdown] = useState(3)
+  const [countdown, setCountdown] = useState(NAVIGATE_SECONDS)
   const [autoNavigate, setAutoNavigate] = useState(true)
+  const [showConfetti, setShowConfetti] = useState(true)
+
+  // Turn off confetti after it completes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowConfetti(false)
+    }, CONFETTI_DURATION)
+
+    return () => clearTimeout(timer)
+  }, [])
 
   // Countdown timer for auto-navigation
   useEffect(() => {
@@ -40,7 +54,7 @@ export function SuccessPreview({
         }
         return prev - 1
       })
-    }, 10000)
+    }, NAVIGATE_SECONDS * 1_000)
 
     return () => clearInterval(timer)
   }, [autoNavigate, onViewDetails])
@@ -56,17 +70,19 @@ export function SuccessPreview({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.8 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-      className="max-w-2xl mx-auto"
-    >
+    <>
+      <CoinConfetti active={showConfetti} duration={4000} coinCount={50} />
+      <motion.div
+        initial={{ opacity: 0, y: 50, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
+        className="max-w-2xl mx-auto"
+      >
       {/* Sparkle/Celebration Effect */}
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: [0, 1, 1, 0], scale: [0.8, 1.2, 1.2, 1] }}
-        transition={{ duration: 1.5, times: [0, 0.2, 0.8, 1] }}
+        transition={{ duration: 2, times: [0, 0.2, 0.8, 1] }}
         className="absolute -top-20 left-1/2 -translate-x-1/2 text-8xl pointer-events-none"
       >
         ✨
@@ -196,5 +212,6 @@ export function SuccessPreview({
         </div>
       </Card>
     </motion.div>
+    </>
   )
 }

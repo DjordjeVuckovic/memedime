@@ -1,13 +1,10 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from '@/components/ui'
 import { ConnectIcon } from '@/components/ConnectIcon.tsx'
+import { formatWalletAddress } from '@/wallet/util.ts'
 
 export const WalletConnectButton = ({connecting} : {connecting: (should: boolean) => void}) => {
   const { publicKey, disconnect, connected } = useWallet()
-
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 4)}...${address.slice(-4)}`
-  }
 
   const handleWalletClick = () => {
     if (connected) {
@@ -29,7 +26,7 @@ export const WalletConnectButton = ({connecting} : {connecting: (should: boolean
         onClick={handleWalletClick}
       >
         <ConnectIcon connected={connected} />
-        {connected && publicKey ? formatAddress(publicKey.toBase58()) : 'CONNECT'}
+        {connected && publicKey ? formatWalletAddress(publicKey.toBase58()) : 'CONNECT'}
       </Button>
     </div>
   )

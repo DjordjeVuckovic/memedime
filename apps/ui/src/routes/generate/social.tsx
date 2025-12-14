@@ -1,10 +1,13 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Toast, useToast } from '@/components/ui'
 import { SocialMode } from '@/components/generate/SocialMode'
 import { CustomizationOptions, type CoinVibe } from '@/components/generate/CustomizationOptions'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
 import { useGenerateCoin } from '@/routes/coins/queries'
+import { useWalletContext } from '@/wallet/WalletContext'
 
 export const Route = createFileRoute('/generate/social')({
   component: SocialModePage,
@@ -12,17 +15,28 @@ export const Route = createFileRoute('/generate/social')({
 
 function SocialModePage() {
   const navigate = useNavigate()
+  const { connected } = useWalletContext()
+  const { toastState, showToast, hideToast } = useToast()
   const [socialUrl, setSocialUrl] = useState('')
   const [socialContent, setSocialContent] = useState('')
   const [context, setContext] = useState('')
   const [vibe, setVibe] = useState<CoinVibe>('')
+  const [showResult, setShowResult] = useState(false)
 
   const generateMutation = useGenerateCoin({
     onError: (error) => {
       console.error('Failed to generate coin:', error)
-      alert(`Failed to generate coin: ${error.message}`)
+      showToast(`FAILED TO GENERATE COIN: ${error.message.toUpperCase()}`, 'error')
+      setShowResult(false)
     },
   })
+
+  // Show result when API succeeds
+  useEffect(() => {
+    if (generateMutation.isSuccess && generateMutation.data && !showResult) {
+      setShowResult(true)
+    }
+  }, [generateMutation.isSuccess, generateMutation.data, showResult])
 
   // Validation
   const validateUrl = (url: string) => {
@@ -37,14 +51,23 @@ function SocialModePage() {
   const isUrlValid = validateUrl(socialUrl)
 
   const handleGenerate = () => {
+    // Auth guard - check if wallet is connected
+    if (!connected) {
+      showToast('PLEASE CONNECT YOUR WALLET FIRST!', 'error')
+      return
+    }
+
     if (!socialContent.trim()) {
-      alert('Please enter post content!')
+      showToast('PLEASE ENTER POST CONTENT!', 'warning')
       return
     }
     if (socialUrl && !isUrlValid) {
-      alert('Please enter a valid URL or leave it empty!')
+      showToast('PLEASE ENTER A VALID URL OR LEAVE IT EMPTY!', 'warning')
       return
     }
+
+    // Reset states
+    setShowResult(false)
 
     // Construct prompt from context if provided
     let prompt = context.trim() || undefined
@@ -60,11 +83,12 @@ function SocialModePage() {
 
   const handleViewDetails = () => {
     if (generateMutation.data) {
-      navigate({ to: '/coins/$coinId', params: { coinId: String(generateMutation.data.id) } })
+      void navigate({ to: '/coins/$coinId', params: { coinId: String(generateMutation.data.id) } })
     }
   }
 
   const handleGenerateAnother = () => {
+    setShowResult(false)
     generateMutation.reset()
     setSocialContent('')
     setSocialUrl('')
@@ -87,7 +111,7 @@ function SocialModePage() {
   return (
     <>
       {/* Show Success Preview after generation */}
-      {generateMutation.isSuccess && generatedCoin ? (
+      {showResult && generatedCoin ? (
         <div className="py-12">
           <SuccessPreview
             coin={generatedCoin}
@@ -130,13 +154,26 @@ function SocialModePage() {
               glow
               className="hover-shake w-full max-w-md"
               onClick={handleGenerate}
-              disabled={!canGenerate}
+              disabled={!connected || !canGenerate}
             >
-              {generateMutation.isPending ? 'GENERATING...' : 'GENERATE FROM POST'}
+              <Sparkles className="w-5 h-5" />
+              {generateMutation.isPending
+                ? 'GENERATING...'
+                : !connected
+                  ? 'CONNECT WALLET TO GENERATE'
+                  : 'GENERATE FROM POST'}
             </Button>
           </div>
         </>
       )}
+
+      {/* Toast Notifications */}
+      <Toast
+        show={toastState.show}
+        message={toastState.message}
+        variant={toastState.variant}
+        onClose={hideToast}
+      />
     </>
   )
 }

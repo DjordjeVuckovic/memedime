@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -7,16 +7,30 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Zap, Rocket, TrendingUp } from 'lucide-react'
+import { Zap, Rocket, TrendingUp, Sparkles } from 'lucide-react'
 import { ConnectIcon } from '@/components/ConnectIcon'
 import { CoinTicker } from '@/components/CoinTicker'
 import { RobotIcon } from '@/components/RobotIcon'
+import { useWalletContext } from '@/wallet/WalletContext'
+import { WalletModal } from '@/wallet'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
 function HomePage() {
+  const { connected } = useWalletContext()
+  const navigate = useNavigate()
+  const [walletModalOpen, setWalletModalOpen] = useState(false)
+
+  const handleCTAClick = () => {
+    if (connected) {
+      navigate({ to: '/generate/random' })
+    } else {
+      setWalletModalOpen(true)
+    }
+  }
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -67,11 +81,15 @@ function HomePage() {
 
             {/* CTA Button */}
             <div className="pt-8 animate-slide-up" style={{ animationDelay: '400ms' }}>
-              <Button variant="gold" size="xl" glow className="hover-shake" asChild>
-                <Link to="/generate">
-                  <ConnectIcon />
-                  CONNECT & GEN
-                </Link>
+              <Button
+                variant="gold"
+                size="xl"
+                glow
+                className="hover-shake"
+                onClick={handleCTAClick}
+              >
+                {connected ? <Sparkles className="w-5 h-5" /> : <ConnectIcon />}
+                {connected ? 'GENERATE' : 'CONNECT & GEN'}
               </Button>
             </div>
 
@@ -97,7 +115,7 @@ function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-5xl sm:text-6xl font-black mb-4 uppercase tracking-tight">
-              <span className="bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 HOW IT WORKS
               </span>
             </h2>
@@ -274,6 +292,9 @@ function HomePage() {
           </Card>
         </div>
       </section>
+
+      {/* Wallet Modal */}
+      <WalletModal isOpen={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
     </div>
   )
 }

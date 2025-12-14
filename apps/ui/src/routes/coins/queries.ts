@@ -29,6 +29,7 @@ export const useCoin = (
   return useQuery({
     queryKey: coinKeys.detail(id),
     queryFn: () => api.getCoinById(id),
+    placeholderData: (previousData) => previousData, // Keep previous data while fetching
     ...options,
   })
 }
@@ -92,7 +93,7 @@ export const useGenerateCoin = (
       api.generateCoin(data),
     onSuccess: (data) => {
       // Invalidate and refetch coins list
-      queryClient.invalidateQueries({ queryKey: coinKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: coinKeys.lists() }).then()
       // Set the coin detail in cache
       queryClient.setQueryData(coinKeys.detail(data.id), data)
     },

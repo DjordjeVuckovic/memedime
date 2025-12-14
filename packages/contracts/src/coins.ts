@@ -80,9 +80,30 @@ export const CoinRespSchema = z
   })
 export type CoinResp = z.infer<typeof CoinRespSchema>
 
+export const CoinItemSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  ticker: z.string(),
+  tagline: z.string().optional(),
+  description: z.string().optional(),
+  walletAddress: z.string().optional(),
+  mode: ModeSchema,
+  createdAt: z.preprocess(
+    (val) => {
+      if(typeof val === 'number') {
+        return new Date(val).toISOString();
+      }
+      return val;
+    },
+    z.string().optional()
+  ),
+})
+
+export type CoinItem = z.infer<typeof CoinItemSchema>
+
 export const CoinsRespSchema = z.object(
   {
-    items: CoinRespSchema.array(),
+    items: CoinItemSchema.array(),
     nextCursor: z.string().optional(),
   },
 )
@@ -90,9 +111,11 @@ export const CoinsRespSchema = z.object(
 export type CoinsResp = z.infer<typeof CoinsRespSchema>
 
 export const SearchReqSchema = z.object({
-  q: z.string().optional(),
-  mode: ModeSchema.optional(),
-  sortBy: SortBySchema.optional(),
+  q: z.string().optional().catch(undefined),
+  mode: ModeSchema.optional().catch(undefined),
+  sortBy: SortBySchema.optional().default('recent'),
   limit: z.coerce.number().optional().default(50),
   cursor: z.string().optional(),
 })
+
+export type SearchReq = z.infer<typeof SearchReqSchema>

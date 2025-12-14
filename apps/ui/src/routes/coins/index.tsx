@@ -1,17 +1,16 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useCallback, useState, useEffect } from 'react'
-import { Search, TrendingUp, Clock, Sparkles, Loader2, AlertCircle } from 'lucide-react'
+import { Search, TrendingUp, Clock, Sparkles, Loader2 } from 'lucide-react'
 import { useSearchCoins } from './queries'
-import { useDebounce } from '@/lib/hooks'
-import { ModeSchema, SortBySchema, type Mode } from '@memedime/contracts'
+import { useDebounce } from '@/hooks/useDebounce'
+import { type Mode, SearchReqSchema } from '@memedime/contracts'
 import { formatWalletAddress } from '@/wallet/util.ts'
+import { ErrorPage } from '@/components/ErrorPage'
 import { z } from 'zod'
 
-// Search params schema with validation
-const CoinsSearchSchema = z.object({
-  q: z.string().max(200).optional().catch(undefined),
-  mode: ModeSchema.optional().catch(undefined),
-  sortBy: SortBySchema.optional().default('recent'),
+const CoinsSearchSchema = SearchReqSchema.omit({
+  limit: true,
+  cursor: true,
 })
 
 type CoinsSearch = z.infer<typeof CoinsSearchSchema>
@@ -21,6 +20,19 @@ export const Route = createFileRoute('/coins/')({
     return CoinsSearchSchema.parse(search)
   },
   component: CoinsCollectionPage,
+  errorComponent: ({ error }) => (
+    <ErrorPage
+      title="INVALID SEARCH PARAMETERS"
+      message={
+        error instanceof z.ZodError
+          ? `Invalid search parameters: ${error.issues.map((i) => i.message).join(', ')}`
+          : 'The search parameters you provided are not valid. Please try again.'
+      }
+      errorCode="INVALID_SEARCH"
+      showBackButton={true}
+      showHomeButton={true}
+    />
+  ),
 })
 
 function CoinsCollectionPage() {
@@ -217,22 +229,17 @@ function CoinsCollectionPage() {
 
         {/* Error State */}
         {isError && (
-          <div className="text-center py-20">
-            <div className="flex flex-col items-center gap-4">
-              <AlertCircle className="w-16 h-16 text-red-400" />
-              <p className="text-3xl font-black text-red-400 mb-2">ERROR LOADING COINS</p>
-              <p className="text-white/40 font-mono max-w-md">
-                {error instanceof Error ? error.message : 'Please try again later'}
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="mt-4 px-6 py-3 bg-red-500/20 hover:bg-red-500/30 text-red-400
-                         font-bold uppercase rounded-xl transition-all duration-300 border-2 border-red-400"
-              >
-                Reload Page
-              </button>
-            </div>
-          </div>
+          <ErrorPage
+            title="ERROR LOADING COINS"
+            message={
+              error instanceof Error
+                ? error.message
+                : 'Failed to load coins. Please try again later.'
+            }
+            errorCode="FETCH_ERROR"
+            showBackButton={false}
+            showHomeButton={true}
+          />
         )}
 
         {/* Empty State */}

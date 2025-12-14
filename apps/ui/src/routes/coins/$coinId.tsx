@@ -4,13 +4,38 @@ import { useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { ErrorPage } from '@/components/ErrorPage'
 import { useCoin } from './queries'
 import XIcon from '@/assets/icons/x.svg'
 import FarcasterIcon from '@/assets/icons/farcaster.svg'
 import RedditIcon from '@/assets/icons/reddit.svg'
+import { z } from 'zod'
+
+const CoinParamsSchema = z.object({
+  coinId: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+    message: 'Coin ID must be a valid positive number',
+  }),
+})
 
 export const Route = createFileRoute('/coins/$coinId')({
+  params: {
+    parse: (params) => CoinParamsSchema.parse(params),
+    stringify: (params) => ({ coinId: params.coinId }),
+  },
   component: CoinDetailPage,
+  errorComponent: ({ error }) => (
+    <ErrorPage
+      title="INVALID COIN ID"
+      message={
+        error instanceof z.ZodError
+          ? error.issues[0]?.message || 'The coin ID provided is not valid.'
+          : 'The coin ID provided is not valid. Please check the URL and try again.'
+      }
+      errorCode="INVALID_PARAM"
+      showBackButton={true}
+      showHomeButton={true}
+    />
+  ),
 })
 
 function CoinDetailPage() {
@@ -18,7 +43,6 @@ function CoinDetailPage() {
   const navigate = useNavigate()
   const { publicKey } = useWallet()
   const [copiedTicker, setCopiedTicker] = useState(false)
-
   // Fetch coin data
   const { data: coin, isLoading, isError } = useCoin(Number(coinId))
 
@@ -38,15 +62,14 @@ function CoinDetailPage() {
 
   if (isError || !coin) {
     return (
-      <div className="min-h-screen py-20 px-4 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-black text-white/40 mb-4">COIN NOT FOUND</h1>
-          <Button onClick={() => navigate({ to: '/coins' })}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Collection
-          </Button>
-        </div>
-      </div>
+      <ErrorPage
+        title="COIN NOT FOUND"
+        message="The coin you are looking for does not exist or has been removed."
+        errorCode="404"
+        showBackButton={true}
+        showHomeButton={true}
+        onBack={() => navigate({ to: '/coins', search: { sortBy: 'recent' } })}
+      />
     )
   }
 
@@ -122,7 +145,7 @@ function CoinDetailPage() {
       <div className="max-w-5xl mx-auto">
         {/* Back Button */}
         <div className="mb-8">
-          <Button variant="ghost" onClick={() => navigate({ to: '/coins' })}>
+          <Button variant="ghost" onClick={() => navigate({ to: '/coins', search: { sortBy: 'recent' } })}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Collection
           </Button>

@@ -7,7 +7,9 @@
     "@ai-sdk/groq": "^2.0.32",
     "@ai-sdk/openai": "^2.0.74",
     "@ai-sdk/xai": "^2.0.39",
+    "@coinbase/x402": "^2.0.0",
     "@hono/standard-validator": "^0.2.0",
+    "@memedime/contracts": "workspace:*",
     "@openrouter/ai-sdk-provider": "^1.2.8",
     "@scalar/hono-api-reference": "^0.9.25",
     "@scalar/openapi-to-markdown": "^0.3.4",
@@ -15,10 +17,11 @@
     "ai": "^5.0.104",
     "hono": "^4.10.7",
     "hono-openapi": "^1.1.1",
+    "install": "^0.13.0",
     "jsonrepair": "^3.13.1",
     "ollama-ai-provider-v2": "^1.5.5",
-    "zod": "^4.1.13",
-    "@memedime/contracts": "workspace:*"
+    "x402-hono": "^1.0.0",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/bun": "latest",

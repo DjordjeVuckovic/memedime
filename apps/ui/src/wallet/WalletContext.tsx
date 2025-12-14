@@ -1,0 +1,85 @@
+import { createContext, useContext, type ReactNode, useEffect, useState } from 'react'
+import { useWallet as useSolanaWallet } from '@solana/wallet-adapter-react'
+import type { PublicKey } from '@solana/web3.js'
+
+interface WalletContextValue {
+  // Wallet connection state
+  connected: boolean
+  connecting: boolean
+  disconnecting: boolean
+
+  // Wallet address
+  publicKey: PublicKey | null
+  address: string | null
+
+  // Wallet actions
+  disconnect: () => Promise<void>
+
+  // User authentication state (for future use)
+  isAuthenticated: boolean
+
+  connectionTriggered: boolean
+  setConnectionTriggered: (value: boolean) => void
+}
+
+const WalletContext = createContext<WalletContextValue | undefined>(undefined)
+
+interface WalletContextProviderProps {
+  children: ReactNode
+}
+
+export function WalletContextProvider({ children }: WalletContextProviderProps) {
+  const solanaWallet = useSolanaWallet()
+  const { publicKey, connected, disconnect, signIn } = solanaWallet
+  const [connectionTriggered, setConnectionTriggered] = useState(false)
+
+  const handleSignIn = async () => {
+    if (!publicKey || !signIn) return
+
+    try {
+      const signature = await signIn({
+        domain: 'memedime.fun',
+        address: publicKey.toBase58(),
+        statement: 'Sign in to MemeDime',
+        uri: 'https://memedime.fun',
+      })
+
+      console.log('Signed:', signature)
+    } catch (err) {
+      console.error('Signing failed:', err)
+      await disconnect()
+    }
+  }
+
+  useEffect(() => {
+    if (connectionTriggered && connected) {
+      handleSignIn()
+    }
+  }, [connectionTriggered, connected])
+
+  const value: WalletContextValue = {
+    connected: solanaWallet.connected,
+    connecting: solanaWallet.connecting,
+    disconnecting: solanaWallet.disconnecting,
+    publicKey: solanaWallet.publicKey,
+    address: solanaWallet.publicKey?.toBase58() ?? null,
+    disconnect: solanaWallet.disconnect,
+    isAuthenticated: solanaWallet.connected,
+    connectionTriggered,
+    setConnectionTriggered,
+  }
+
+  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>
+}
+
+export function useWalletContext() {
+  const context = useContext(WalletContext)
+
+  if (context === undefined) {
+    throw new Error('useWalletContext must be used within WalletContextProvider')
+  }
+
+  return context
+}
+
+export { useSolanaWallet as useWallet }

@@ -4,7 +4,8 @@ import type { WalletName } from '@solana/wallet-adapter-base'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button.tsx'
 import { cn } from '@/lib/utils.ts'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useWalletContext } from '@/wallet/WalletContext.tsx'
 
 interface WalletModalProps {
   isOpen: boolean
@@ -12,50 +13,20 @@ interface WalletModalProps {
 }
 
 export function WalletModal({ isOpen, onClose }: WalletModalProps) {
-  const { wallets, select, connected, disconnect, signIn, publicKey } = useWallet()
-  const [isConnecting, setIsConnecting] = useState(false)
-
-  const installedWallets = useMemo(
-    () => wallets.filter((wallet) => wallet.readyState === 'Installed'),
-    [wallets]
-  )
-  const notInstalledWallets = useMemo(
-    () => wallets.filter((wallet) => wallet.readyState !== 'Installed'),
-    [wallets]
-  )
+  const { wallets, select } = useWallet()
+  const { setConnectionTriggered } = useWalletContext()
+  const installedWallets = useMemo(() => wallets.filter((wallet) => wallet.readyState === 'Installed'), [wallets])
+  const notInstalledWallets = useMemo(() => wallets.filter((wallet) => wallet.readyState !== 'Installed'), [wallets])
 
   const handleWalletSelect = async (walletName: WalletName, event?: any) => {
     event?.preventDefault()
 
     select(walletName)
 
-    setIsConnecting(true)
+    setConnectionTriggered(true)
 
     onClose()
   }
-
-  const handleSignIn = async () => {
-    if (!publicKey || !signIn) return
-
-    try {
-      const signature = await signIn({
-        domain: "memedime.fun",
-        address: publicKey.toBase58(),
-        statement: "Sign in to MemeDime",
-        uri: "https://memedime.fun",
-      })
-
-      console.log("Signed:", signature)
-
-    } catch (err) {
-      console.error("Signing failed:", err)
-      await disconnect()
-    }
-  }
-
-  useEffect(() => {
-    isConnecting && connected && handleSignIn()
-  }, [connected])
 
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={onClose}>
@@ -65,7 +36,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
           className={cn(
             'fixed inset-0 z-50 bg-black/80 backdrop-blur-sm',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
-            'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+            'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
           )}
         />
 
@@ -78,7 +49,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
             'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
-            'duration-200'
+            'duration-200',
           )}
         >
           {/* Header */}
@@ -102,9 +73,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
             {/* Installed Wallets */}
             {installedWallets.length > 0 && (
               <div>
-                <h3 className="text-sm font-bold text-white/70 uppercase tracking-wide mb-3">
-                  Detected Wallets
-                </h3>
+                <h3 className="text-sm font-bold text-white/70 uppercase tracking-wide mb-3">Detected Wallets</h3>
                 <div className="space-y-2">
                   {installedWallets.map((wallet) => (
                     <button
@@ -113,11 +82,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
                       className="w-full flex items-center gap-4 p-4 bg-black/40 border-4 border-white/20 rounded-lg
                                hover:border-purple-400 hover:bg-black/60 transition-all group"
                     >
-                      <img
-                        src={wallet.adapter.icon}
-                        alt={wallet.adapter.name}
-                        className="w-10 h-10"
-                      />
+                      <img src={wallet.adapter.icon} alt={wallet.adapter.name} className="w-10 h-10" />
                       <div className="flex-1 text-left">
                         <p className="font-bold text-white group-hover:text-purple-400 transition-colors">
                           {wallet.adapter.name}
@@ -134,9 +99,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
             {/* Not Installed Wallets */}
             {notInstalledWallets.length > 0 && (
               <div>
-                <h3 className="text-sm font-bold text-white/70 uppercase tracking-wide mb-3">
-                  Available Wallets
-                </h3>
+                <h3 className="text-sm font-bold text-white/70 uppercase tracking-wide mb-3">Available Wallets</h3>
                 <div className="space-y-2">
                   {notInstalledWallets.map((wallet) => (
                     <a
@@ -158,9 +121,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
                         </p>
                         <p className="text-xs text-white/40 font-mono">Click to install</p>
                       </div>
-                      <div className="text-white/40 group-hover:text-white transition-colors">
-                        →
-                      </div>
+                      <div className="text-white/40 group-hover:text-white transition-colors">→</div>
                     </a>
                   ))}
                 </div>
@@ -171,9 +132,7 @@ export function WalletModal({ isOpen, onClose }: WalletModalProps) {
             {installedWallets.length === 0 && notInstalledWallets.length === 0 && (
               <div className="text-center py-8">
                 <p className="text-white/70 font-mono">No wallets detected</p>
-                <p className="text-sm text-white/50 font-mono mt-2">
-                  Please install a Solana wallet extension
-                </p>
+                <p className="text-sm text-white/50 font-mono mt-2">Please install a Solana wallet extension</p>
               </div>
             )}
           </div>

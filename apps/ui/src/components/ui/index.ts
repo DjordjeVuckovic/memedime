@@ -8,3 +8,4 @@ export {
   CardContent,
   type CardProps,
 } from './card'
+export { Toast, useToast, type ToastVariant } from './toast'

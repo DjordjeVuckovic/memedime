@@ -3,6 +3,7 @@ import { ConnectionProvider, WalletProvider as SolanaWalletProvider } from '@sol
 import { TorusWalletAdapter, CoinbaseWalletAdapter} from '@solana/wallet-adapter-wallets'
 import { WalletAdapterNetwork, type WalletError } from '@solana/wallet-adapter-base'
 import { clusterApiUrl } from '@solana/web3.js'
+import { WalletContextProvider } from './WalletContext'
 
 interface WalletProviderProps {
   children: ReactNode
@@ -28,7 +29,9 @@ export function WalletProvider({ children }: WalletProviderProps) {
   return (
     <ConnectionProvider endpoint={endpoint}>
       <SolanaWalletProvider wallets={wallets} onError={onError} localStorageKey={'memedime-wallet-name'} autoConnect>
-        {children}
+        <WalletContextProvider>
+          {children}
+        </WalletContextProvider>
       </SolanaWalletProvider>
     </ConnectionProvider>
   )

@@ -8,7 +8,6 @@ export const Route = createFileRoute('/generate')({
 function GenerateLayout() {
   const location = useLocation()
 
-  // Determine active mode from pathname
   const getActiveModeFromPath = (): GenerationMode => {
     if (location.pathname.includes('/random')) return 'random'
     if (location.pathname.includes('/prompt')) return 'prompt'
@@ -22,7 +21,7 @@ function GenerateLayout() {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-5xl sm:text-6xl font-black mb-4 uppercase tracking-tight">
-            <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-yellow-400 to-yellow-500 bg-clip-text text-transparent">
               GENERATE YOUR COIN
             </span>
           </h1>

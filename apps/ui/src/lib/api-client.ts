@@ -3,7 +3,6 @@ import type {
   RandomCoinReqSchema,
   PromptCoinReqSchema,
   SocialCoinReqSchema,
-  GenCoinUnion,
   ModeSchema,
   SortBySchema,
   CoinsRespSchema,
@@ -79,13 +78,13 @@ export const searchCoins = async (
     params.append('sortBy', sortBy)
   }
 
-  // Validate limit is within acceptable range
+  // Validate limit is within the acceptable range
   if (limit && limit > 0 && limit <= 100) {
     params.append('limit', Math.floor(limit).toString())
   }
 
   if (cursor) {
-    // Sanitize cursor (should be alphanumeric with : or -)
+    // Sanitize cursor (should be alphanumeric with: or -)
     const sanitizedCursor = cursor.replace(/[^a-zA-Z0-9:-]/g, '')
     if (sanitizedCursor) {
       params.append('cursor', sanitizedCursor)
