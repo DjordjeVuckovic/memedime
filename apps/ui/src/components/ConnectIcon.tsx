@@ -29,8 +29,8 @@ export const ConnectIcon = ({ className = "w-7 h-7", connected = false }: { clas
         <g
           className={`transition-transform duration-300 ${
             connected
-              ? 'translate-x-[2px] translate-y-[-2px] group-hover:translate-x-0 group-hover:translate-y-0'
-              : 'group-hover:translate-x-[2px] group-hover:translate-y-[-2px]'
+              ? 'translate-x-0.5 -translate-y-0.5 group-hover:translate-x-0 group-hover:translate-y-0'
+              : 'group-hover:translate-x-0.5 group-hover:-translate-y-0.5'
           }`}
         >
           <path

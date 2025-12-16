@@ -7,7 +7,11 @@ import { cn } from '@/lib/utils'
 import { ConnectIcon } from './ConnectIcon'
 import { WalletModal } from '@/wallet'
 import solLogo from '@/assets/imgs/sol-logo.svg'
-import { WalletConnectButton } from '@/wallet/WalletConnectButton.tsx'
+import { WalletButton } from '../wallet/WalletButton.tsx'
+import XIcon from '@/assets/icons/x.svg'
+import GithubIcon from '@/assets/icons/github.svg'
+import RedditIcon from '@/assets/icons/reddit.svg'
+import { appEnv } from '@/lib/env'
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -114,8 +118,39 @@ export default function Navbar() {
             </a>
           </div>
 
+          {/* Social Media Icons */}
+          <div className="hidden md:flex items-center gap-2 border-l border-white/20 pl-4">
+            <a
+              href={appEnv.X_PROFILE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/5 hover:bg-white/10 border-2 border-white/20 hover:border-cyan-400 transition-all hover:scale-110"
+              aria-label="X (Twitter)"
+            >
+              <img src={XIcon} alt="X" className="w-4 h-4" />
+            </a>
+            <a
+              href={appEnv.GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/5 hover:bg-white/10 border-2 border-white/20 hover:border-white transition-all hover:scale-110"
+              aria-label="GitHub"
+            >
+              <img src={GithubIcon} alt="GitHub" className="w-4 h-4" />
+            </a>
+            <a
+              href={appEnv.REDDIT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/5 hover:bg-white/10 border-2 border-white/20 hover:border-orange-500 transition-all hover:scale-110"
+              aria-label="Reddit"
+            >
+              <img src={RedditIcon} alt="Reddit" className="w-4 h-4" />
+            </a>
+          </div>
+
           {/* Connect Wallet Button */}
-          <WalletConnectButton connecting={(x) => setWalletModalOpen(x)} />
+          <WalletButton connecting={(x) => setWalletModalOpen(x)} />
 
           {/* Mobile menu button */}
           <button
@@ -171,6 +206,42 @@ export default function Navbar() {
           >
             Docs
           </a>
+
+          {/* Social Media Icons - Mobile */}
+          <div className="flex items-center gap-3 px-4 py-3 border-t border-white/10">
+            <span className="text-xs font-bold text-white/60 uppercase">Follow:</span>
+            <a
+              href={appEnv.X_PROFILE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-cyan-400/20 hover:bg-cyan-400/30 border-2 border-cyan-400/40 hover:border-cyan-400 transition-all"
+              aria-label="X (Twitter)"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <img src={XIcon} alt="X" className="w-5 h-5" />
+            </a>
+            <a
+              href={appEnv.GITHUB_REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-white/10 hover:bg-white/20 border-2 border-white/20 hover:border-white transition-all"
+              aria-label="GitHub"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <img src={GithubIcon} alt="GitHub" className="w-5 h-5" />
+            </a>
+            <a
+              href={appEnv.REDDIT_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 bg-orange-500/20 hover:bg-orange-500/30 border-2 border-orange-500/40 hover:border-orange-500 transition-all"
+              aria-label="Reddit"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <img src={RedditIcon} alt="Reddit" className="w-5 h-5" />
+            </a>
+          </div>
+
           <div className="pt-2">
             <Button
               variant={connected ? 'green' : 'gold'}

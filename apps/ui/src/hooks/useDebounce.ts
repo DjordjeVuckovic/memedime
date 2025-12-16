@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
  *   fetchResults(debouncedQuery)
  * }, [debouncedQuery])
  */
-export const useDebounce = <T,>(value: T, delay: number = 1_000): T => {
+export const useDebounce = <T,>(value: T, delay: number = 500): T => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)
 
   useEffect(() => {

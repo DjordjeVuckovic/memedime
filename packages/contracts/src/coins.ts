@@ -73,7 +73,7 @@ export const CoinRespSchema = z
     walletAddress: z.string().optional(),
     mode: ModeSchema,
     combos: CoinCombosSchema.optional(),
-    createdAt: z.string().optional(),
+    createdAt: z.string(),
   })
   .meta({
     description: 'Schema for meme coin generation response',
@@ -105,6 +105,7 @@ export const CoinsRespSchema = z.object(
   {
     items: CoinItemSchema.array(),
     nextCursor: z.string().optional(),
+    count: z.number().optional().default(0),
   },
 )
 

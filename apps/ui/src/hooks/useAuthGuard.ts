@@ -12,7 +12,7 @@ export function useAuthGuard() {
   const { showToast } = useToast()
 
   /**
-   * Check if user is authenticated (wallet connected)
+   * Check if the user is authenticated (wallet connected)
    * Shows error toast if not connected
    *
    * @returns boolean - true if authenticated, false otherwise

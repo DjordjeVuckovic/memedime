@@ -7,13 +7,18 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Zap, Rocket, TrendingUp, Sparkles } from 'lucide-react'
+import { Zap, Rocket, TrendingUp, Sparkles, Shield, Bolt, Brain, Trophy } from 'lucide-react'
 import { ConnectIcon } from '@/components/ConnectIcon'
 import { CoinTicker } from '@/components/CoinTicker'
 import { RobotIcon } from '@/components/RobotIcon'
 import { useWalletContext } from '@/wallet/WalletContext'
 import { WalletModal } from '@/wallet'
 import { useState } from 'react'
+import ReactIcon from '@/assets/icons/react.svg'
+import TanStackIcon from '@/assets/icons/tanstack.svg'
+import SolanaIcon from '@/assets/icons/solana.svg'
+import HonoIcon from '@/assets/icons/hono.svg'
+import SQLiteIcon from '@/assets/icons/sqlite.svg'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -98,9 +103,9 @@ function HomePage() {
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-black/60 border-4 border-white/20 backdrop-blur font-mono text-sm text-green-400">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                 <span className="font-bold">LIVE:</span>
-                <span>247 SPINS</span>
+                <span>1,247 SPINS</span>
                 <span className="text-white/40">•</span>
-                <span>12 LAUNCHED</span>
+                <span className="text-cyan-400">LAUNCH SOON</span>
               </div>
             </div>
           </div>
@@ -109,6 +114,78 @@ function HomePage() {
 
       {/* Viral Coins Ticker */}
       <CoinTicker />
+
+      {/* Why Choose MemeDime */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl sm:text-6xl font-black mb-4 uppercase tracking-tight">
+              <span className="bg-gradient-to-r from-yellow-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                WHY MEMEDIME?
+              </span>
+            </h2>
+            <p className="text-xl text-white/70 font-bold">THE FASTEST WAY TO MEME COIN GREATNESS</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="hover-lift border-4 border-cyan-400 bg-cyan-400/10">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="w-16 h-16 bg-cyan-400 border-4 border-black brutal-shadow-sm flex items-center justify-center">
+                    <Bolt className="w-8 h-8 text-black" />
+                  </div>
+                  <h3 className="text-xl font-black text-white uppercase">INSTANT GENERATION</h3>
+                  <p className="text-sm text-white/70 font-bold">
+                    AI creates your complete coin concept in seconds. No design skills needed.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift border-4 border-purple-400 bg-purple-400/10">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="w-16 h-16 bg-purple-400 border-4 border-black brutal-shadow-sm flex items-center justify-center">
+                    <Brain className="w-8 h-8 text-black" />
+                  </div>
+                  <h3 className="text-xl font-black text-white uppercase">AI POWERED</h3>
+                  <p className="text-sm text-white/70 font-bold">
+                    Advanced AI ensures every coin is unique, creative, and meme-worthy.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift border-4 border-yellow-400 bg-yellow-400/10">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="w-16 h-16 bg-yellow-400 border-4 border-black brutal-shadow-sm flex items-center justify-center">
+                    <Shield className="w-8 h-8 text-black" />
+                  </div>
+                  <h3 className="text-xl font-black text-white uppercase">SECURE x402</h3>
+                  <p className="text-sm text-white/70 font-bold">
+                    Built on Solana with x402 micropayments. Fast, cheap, and secure.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="hover-lift border-4 border-green-400 bg-green-400/10">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center gap-4">
+                  <div className="w-16 h-16 bg-green-400 border-4 border-black brutal-shadow-sm flex items-center justify-center">
+                    <Trophy className="w-8 h-8 text-black" />
+                  </div>
+                  <h3 className="text-xl font-black text-white uppercase">VIRAL READY</h3>
+                  <p className="text-sm text-white/70 font-bold">
+                    Every coin comes with marketing angles designed to go viral.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
 
       {/* How It Works Section */}
       <section id="how-it-works" className="py-20 px-4 bg-black/30">
@@ -162,11 +239,11 @@ function HomePage() {
             <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '300ms', boxShadow: '6px 6px 0px rgb(74 222 128)' }}>
               <CardHeader>
                 <div className="text-6xl font-black text-green-400 mb-3">04</div>
-                <CardTitle className="text-xl">SEND IT</CardTitle>
+                <CardTitle className="text-xl">SHARE IT</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Launch on pump.fun or just flex it on Twitter.
+                  Flex your creation on Twitter, share with frens, go viral.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -176,7 +253,7 @@ function HomePage() {
 
       {/* Stats Section */}
       <section id="stats" className="py-20 px-4">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <Card glow glowColor="gold" padding="lg" className="hover-lift">
             <CardHeader className="text-center">
               <CardTitle className="text-4xl sm:text-5xl flex items-center justify-center gap-3">
@@ -189,104 +266,268 @@ function HomePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 pt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-6">
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-yellow-400 group-hover:scale-110 transition-transform">
-                    247
+                    342
                   </div>
                   <div className="text-sm text-white/60 mt-2 font-bold uppercase">
-                    Spins Today
-                  </div>
-                </div>
-                <div className="text-center group">
-                  <div className="text-6xl font-black font-mono text-green-400 group-hover:scale-110 transition-transform">
-                    12
-                  </div>
-                  <div className="text-sm text-white/60 mt-2 font-bold uppercase flex items-center justify-center gap-1">
-                    Coins Launched <Rocket className="w-4 h-4" />
+                    Coins Today
                   </div>
                 </div>
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-cyan-400 group-hover:scale-110 transition-transform">
-                    4.9%
+                    1,247
                   </div>
                   <div className="text-sm text-white/60 mt-2 font-bold uppercase">
-                    Launch Rate
+                    Total Generated
                   </div>
                 </div>
+                <div className="text-center group">
+                  <div className="text-6xl font-black font-mono text-purple-400 group-hover:scale-110 transition-transform">
+                    89
+                  </div>
+                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">
+                    Unique Wallets
+                  </div>
+                </div>
+                <div className="text-center group">
+                  <div className="text-6xl font-black font-mono text-green-400 group-hover:scale-110 transition-transform">
+                    24/7
+                  </div>
+                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">
+                    Uptime
+                  </div>
+                </div>
+              </div>
+              <div className="mt-8 pt-8 border-t-4 border-white/10">
+                <div className="flex items-center justify-center gap-3 text-center flex-wrap">
+                  <Rocket className="w-6 h-6 text-purple-400 animate-pulse" />
+                  <span className="text-lg font-black text-purple-400 uppercase">
+                    PUMP.FUN & BONK.FUN LAUNCH COMING SOON
+                  </span>
+                  <Rocket className="w-6 h-6 text-purple-400 animate-pulse" />
+                </div>
+                <p className="text-sm text-white/60 mt-3 font-bold">
+                  One-click deployment to your favorite platforms. Stay tuned!
+                </p>
               </div>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      {/* Component Demo Section */}
+      {/* Tech Stack Section */}
       <section className="py-20 px-4 bg-black/30">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <h2 className="text-4xl font-black text-center mb-12 uppercase">
-            <span className="bg-white text-black px-6 py-3 border-4 border-black brutal-shadow inline-block">
-              UI Components
-            </span>
-          </h2>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl sm:text-6xl font-black mb-4 uppercase tracking-tight">
+              <span className="bg-white text-black px-6 py-3 border-4 border-black brutal-shadow inline-block">
+                BUILT WITH
+              </span>
+            </h2>
+            <p className="text-xl text-white/70 font-bold mt-6">CUTTING-EDGE TECH STACK</p>
+          </div>
 
-          {/* Button Variants */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Button Styles</CardTitle>
-              <CardDescription>
-                Brutalist buttons with hard shadows
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="primary">Primary</Button>
-                <Button variant="secondary">Secondary</Button>
-                <Button variant="gold">Gold</Button>
-                <Button variant="cyan">Cyan</Button>
-                <Button variant="green">Green</Button>
-                <Button variant="red">Red</Button>
-                <Button variant="ghost">Ghost</Button>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {/* React */}
+            <div className="group">
+              <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-cyan-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(34,211,238,1)]">
+                <div className="flex flex-col items-center gap-3">
+                  <img src={ReactIcon} alt="React" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <span className="text-sm font-black text-white uppercase">React 19</span>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Button Sizes */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Button Sizes</CardTitle>
-              <CardDescription>
-                From smol to absolute unit
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap items-center gap-4">
-                <Button size="sm">Small</Button>
-                <Button size="md">Medium</Button>
-                <Button size="lg">Large</Button>
-                <Button size="xl">Extra Large</Button>
+            {/* TanStack */}
+            <div className="group">
+              <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-yellow-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(251,191,36,1)]">
+                <div className="flex flex-col items-center gap-3">
+                  <img src={TanStackIcon} alt="TanStack" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <span className="text-sm font-black text-white uppercase">TanStack</span>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          {/* Glowing Buttons */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Glow Effects</CardTitle>
-              <CardDescription>
-                Maximum attention grabbing
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-4">
-                <Button variant="primary" glow>
-                  Purple Glow
-                </Button>
-                <Button variant="gold" glow>
-                  Gold Glow
-                </Button>
-                <Button variant="green" glow>
-                  Green Glow
-                </Button>
+            {/* Solana */}
+            <div className="group">
+              <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-purple-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(192,132,252,1)]">
+                <div className="flex flex-col items-center gap-3">
+                  <img src={SolanaIcon} alt="Solana" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <span className="text-sm font-black text-white uppercase">Solana</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Hono */}
+            <div className="group">
+              <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-orange-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(251,146,60,1)]">
+                <div className="flex flex-col items-center gap-3">
+                  <img src={HonoIcon} alt="Hono" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <span className="text-sm font-black text-white uppercase">Hono</span>
+                </div>
+              </div>
+            </div>
+
+            {/* SQLite */}
+            <div className="group">
+              <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-green-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(74,222,128,1)]">
+                <div className="flex flex-col items-center gap-3">
+                  <img src={SQLiteIcon} alt="SQLite" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <span className="text-sm font-black text-white uppercase">SQLite</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* x402 Protocol Callout */}
+          <div className="mt-12">
+            <Card glow glowColor="purple" padding="lg">
+              <CardContent>
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-purple-500 border-4 border-black flex items-center justify-center brutal-shadow-sm">
+                      <Zap className="w-10 h-10 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-black text-white uppercase">x402 Protocol</h3>
+                      <p className="text-white/70 font-bold">Next-gen micropayments on Solana</p>
+                    </div>
+                  </div>
+                  <div className="text-center md:text-right">
+                    <div className="text-4xl font-black font-mono text-yellow-400">$0.10</div>
+                    <p className="text-sm text-white/60 font-bold uppercase mt-1">Per Transaction</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Community Showcase */}
+      <section className="py-20 px-4 bg-black/30">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl sm:text-6xl font-black mb-4 uppercase tracking-tight">
+              <span className="bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
+                RECENT HITS
+              </span>
+            </h2>
+            <p className="text-xl text-white/70 font-bold">FRESH FROM THE GENERATOR</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Example Coin 1 */}
+            <Card glow glowColor="gold" className="hover-lift">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="text-4xl mb-2">🦫🍕💎</div>
+                  <h3 className="text-2xl font-black text-yellow-400">$CAPYPIZZA</h3>
+                  <p className="text-sm text-white/70 font-bold">
+                    "The chillest coin in the metaverse. Diamond paws only."
+                  </p>
+                  <div className="pt-4 border-t-2 border-white/10">
+                    <div className="text-xs text-white/50 font-mono">2 HOURS AGO</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Example Coin 2 */}
+            <Card glow glowColor="purple" className="hover-lift">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="text-4xl mb-2">🐸🌮🚀</div>
+                  <h3 className="text-2xl font-black text-purple-400">$FROGTACO</h3>
+                  <p className="text-sm text-white/70 font-bold">
+                    "Ribbit to riches. Taco Tuesday every day. To the moon."
+                  </p>
+                  <div className="pt-4 border-t-2 border-white/10">
+                    <div className="text-xs text-white/50 font-mono">5 HOURS AGO</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Example Coin 3 */}
+            <Card glow glowColor="green" className="hover-lift">
+              <CardContent className="pt-6">
+                <div className="text-center space-y-4">
+                  <div className="text-4xl mb-2">🦍🍔⚡</div>
+                  <h3 className="text-2xl font-black text-green-400">$APEBURG</h3>
+                  <p className="text-sm text-white/70 font-bold">
+                    "Ape together strong. Ape together hungry. Lightning speed."
+                  </p>
+                  <div className="pt-4 border-t-2 border-white/10">
+                    <div className="text-xs text-white/50 font-mono">8 HOURS AGO</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-12">
+            <Button
+              variant="gold"
+              size="lg"
+              glow
+              className="hover-shake"
+              onClick={handleCTAClick}
+            >
+              <Sparkles className="w-5 h-5" />
+              CREATE YOUR OWN
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <Card className="border-8 border-yellow-400 bg-gradient-to-br from-purple-900/80 to-purple-800/80 brutal-shadow-lg">
+            <CardContent className="py-12 px-6">
+              <div className="text-center space-y-8">
+                <div className="inline-block animate-pulse-grow">
+                  <span className="text-6xl">🎰</span>
+                </div>
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-white uppercase">
+                  READY TO GO
+                  <span className="block text-yellow-400 mt-2">VIRAL?</span>
+                </h2>
+                <p className="text-xl text-white/80 font-bold max-w-2xl mx-auto">
+                  Join the degens creating the next generation of meme coins.
+                  <span className="text-cyan-400"> Only $0.10 per spin.</span>
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+                  <Button
+                    variant="gold"
+                    size="xl"
+                    glow
+                    className="hover-shake text-xl px-12"
+                    onClick={handleCTAClick}
+                  >
+                    <Sparkles className="w-6 h-6" />
+                    {connected ? 'START GENERATING' : 'CONNECT WALLET'}
+                  </Button>
+                </div>
+                <div className="pt-6 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm font-bold text-white/60">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+                    <span>342 COINS TODAY</span>
+                  </div>
+                  <div className="text-white/40 hidden sm:block">•</div>
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-purple-400" />
+                    <span>SECURE x402</span>
+                  </div>
+                  <div className="text-white/40 hidden sm:block">•</div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-yellow-400" />
+                    <span>INSTANT DEPLOY</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

@@ -23,10 +23,8 @@ export function useConfetti({
 
   useEffect(() => {
     if (isSuccess) {
-      // Trigger confetti immediately when success
       setShowConfetti(true)
 
-      // Hide confetti and call onComplete after delay
       const timeout = setTimeout(() => {
         console.log(showConfetti)
         setShowConfetti(false)

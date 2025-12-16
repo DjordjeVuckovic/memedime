@@ -8,7 +8,7 @@ import {
   type UseInfiniteQueryOptions,
   type InfiniteData,
 } from '@tanstack/react-query'
-import * as api from '@/lib/api-client'
+import * as api from '@/api/api-client.ts'
 import type { Mode, SortBy } from '@memedime/contracts'
 
 // Query Keys

@@ -142,7 +142,7 @@ memeRouter.get(
   async (c) => {
     const { q, mode, sortBy, limit, cursor } = c.req.valid('query')
 
-    const { items, nextCursor } = await searchCoins({
+    const searchResult = await searchCoins({
       q,
       mode,
       sortBy,
@@ -151,10 +151,9 @@ memeRouter.get(
     })
 
     return c.json(
-      {
-        items,
-        nextCursor,
-      } as CoinsResp,
+      CoinsRespSchema.parse({
+        ...searchResult,
+      }),
       200,
     )
   },

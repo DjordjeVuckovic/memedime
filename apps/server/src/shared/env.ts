@@ -1,8 +1,8 @@
-import { LLMProvider, LLMProviderSchema } from '../llms/schemas'
+import { LLMProviderSchema } from '../llms/schemas'
 import { z } from 'zod'
 
 export const appEnvSchema = z.object({
-  PORT: z.string().optional().default('3000'),
+  PORT: z.string().optional().default('1312'),
   DB_URL: z.string().optional().default('./memedime.db'),
   USE_WAL: z
     .string()
@@ -13,6 +13,10 @@ export const appEnvSchema = z.object({
   LLM_MODEL_ID: z.string().optional().default('grok-4'),
   LLM_API_KEY: z.string().optional(),
   LLM_BASE_URL: z.string().optional(),
+  CORS_ORIGINS: z.string().optional().transform((val) => {
+    return val ? val.split(',').map((x) => x.trim()) : '*'
+  }),
+  APP_ORIGIN: z.string().optional().default('http://localhost:1312'),
 })
 
 export const appEnv = appEnvSchema.parse(Bun.env)

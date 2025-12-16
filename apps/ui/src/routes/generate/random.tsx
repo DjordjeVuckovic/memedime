@@ -9,7 +9,7 @@ import { SuccessPreview } from '@/components/generate/SuccessPreview'
 import { useGenerateCoin } from '@/routes/coins/queries'
 import { useWalletContext } from '@/wallet/WalletContext'
 
-const PREVIEW_DELAY = 2_000
+const PREVIEW_DELAY = 1_500
 
 export const Route = createFileRoute('/generate/random')({
   component: RandomModePage,

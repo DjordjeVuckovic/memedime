@@ -5,7 +5,8 @@ import { Scalar } from '@scalar/hono-api-reference'
 import memeRouter from './coins'
 import { openAPIRouteHandler } from 'hono-openapi'
 import { appEnv } from './shared/env'
-import { paymentMiddleware } from 'x402-hono'
+import { createMarkdownFromOpenApi } from '@scalar/openapi-to-markdown'
+const APP_ORIGIN = appEnv.APP_ORIGIN
 
 const app = new Hono({
   strict: false,
@@ -15,19 +16,10 @@ app.use(logger())
 
 app.use(
   cors({
-    origin: '*',
-    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    origin: appEnv.CORS_ORIGINS,
+    allowMethods: ['GET', 'POST', 'HEAD', 'OPTIONS'],
   }),
 )
-
-app
-  .get('/health', (c) => {
-    return c.text('Healthy', 200)
-  })
-  .onError((err, c) => {
-    console.error(err)
-    return c.text('Internal Server Error', 500)
-  })
 
 app.route('/api/', memeRouter)
 
@@ -53,28 +45,19 @@ app.get(
     title: 'Memedime Server API',
   }),
 )
+// await fetch(`${APP_ORIGIN}/openapi.json`).then(async (text) => {
+//   const markdown = await createMarkdownFromOpenApi(text)
+//   app.get('/llms.txt', (c) => c.text(markdown))
+// })
 
-// app.use(
-//   paymentMiddleware(
-//     '3uwxeEit5Y7MAtPHyzSkFHEbeM4omsat1BFdKyrCQg9p', // your receiving wallet address
-//     {
-//       // Route configurations for protected endpoints
-//       'POST /api/v1/coins': {
-//         price: '$0.10',
-//         network: 'solana-devnet',
-//         config: {
-//           description: 'Access to premium content',
-//         },
-//       },
-//     },
-//     {
-//       url: 'https://x402.org/facilitator', // Facilitator URL for Base Sepolia testnet.
-//     },
-//   ),
-// )
-
-// const markdown = await createMarkdownFromOpenApi(content)
-// app.get('/llms.txt', (c) => c.text(markdown))
+app
+  .get('/health', (c) => {
+    return c.text('Healthy', 200)
+  })
+  .onError((err, c) => {
+    console.error(err)
+    return c.text('Internal Server Error', 500)
+  })
 
 export default {
   port: appEnv.PORT,

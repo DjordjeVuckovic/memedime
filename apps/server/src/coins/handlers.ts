@@ -5,7 +5,7 @@ import { coins, Coin, NewCoin } from './db'
 import { db } from '../db'
 import { spinEmojis } from './emojis'
 import { LLMCoinResp } from '../llms/schemas'
-import { eq, sql, isNull, and } from 'drizzle-orm'
+import { eq, isNull, and } from 'drizzle-orm'
 import { omit } from '../shared/types'
 import {
   CoinCombos,
@@ -125,9 +125,6 @@ export const searchCoins = (req: SearchReq) => {
     mapFn: (coin: FtsCoin) => CoinItemSchema.parse(coin),
   })
 }
-
-
-
 
 const mapFromDb = (coin: Coin): CoinResp =>
   CoinSchema.parse({

@@ -71,7 +71,7 @@ export function SuccessPreview({
 
   return (
     <>
-      <CoinConfetti active={showConfetti} duration={4000} coinCount={50} />
+      <CoinConfetti active={showConfetti} />
       <motion.div
         initial={{ opacity: 0, y: 50, scale: 0.8 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}

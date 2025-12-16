@@ -1,10 +1,11 @@
 import { type CoinItem, CoinResp, type CoinsResp, Mode, SearchReqSchema, SortBy } from '@memedime/contracts'
 import { db } from '../db'
-import { Coin } from './db.ts'
+import { Coin, coins } from './db.ts'
 import { sql } from 'drizzle-orm'
 import { z } from 'zod'
+import { decodeCursor, encodeCursor } from '../shared/pagination.ts'
 
-export const buildFtsQuery = (query: string): string => {
+export const buildFtsMatch = (query: string): string => {
   const term = query.trim().toLowerCase()
 
   if (term.length <= 3) {
@@ -12,33 +13,40 @@ export const buildFtsQuery = (query: string): string => {
   }
 
   if (term.length <= 5 && /^[a-z0-9]+$/i.test(term)) {
-    return `{name ticker tagline description}: ${term}* OR ${term}`
+    return `{name ticker tagline}: ${term}* OR ${term}`
   }
 
   return `${term}* OR ${term}`
 }
 
-export type FtsCoin = Pick<Coin, 'id' | 'mode' | 'name' | 'description' | 'tagline' | 'ticker' | 'createdAt' | 'walletAddress'> & {
+export type FtsCoin = Pick<Coin, 'id' | 'mode' | 'name' | 'description' | 'tagline' | 'ticker' | 'walletAddress'> & {
   rank: number
+  createdAt: string
 }
 
-type SearchParams = z.infer<typeof SearchReqSchema> & { mapFn: (coin: FtsCoin) => CoinItem }
-
+type MapFn = (coin: FtsCoin) => CoinItem
+type SearchParams = z.infer<typeof SearchReqSchema> & { mapFn: MapFn }
 
 export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> => {
-  const { q, mode, sortBy, limit, cursor, mapFn } = params
+  const { q, mode, sortBy, limit, cursor } = params
   const hasSearchQuery = q && q.trim() !== '' && q !== '*'
 
   if (hasSearchQuery) {
-    const ftsQuery = buildFtsQuery(q)
+    const ftsQuery = buildFtsMatch(q)
 
-    // Build cursor conditions
-    let cursorSql = sql``
-    if (cursor && sortBy === 'recent') {
-      const [createdAt, id] = cursor.split(':')
-      cursorSql = sql` AND (c.created_at < ${createdAt} OR (c.created_at = ${createdAt} AND c.id < ${parseInt(id)}))`
-    } else if (cursor) {
-      cursorSql = sql` AND c.id > ${parseInt(cursor)}`
+    const cursorSql = buildCursorSql(cursor, sortBy)
+    const countQuery = sql`
+        SELECT count(*)
+        FROM coins c
+               INNER JOIN coins_fts fts ON c.id = fts.rowid
+        WHERE
+          coins_fts MATCH ${ftsQuery}
+          AND c.deleted_at IS NULL
+          ${mode ? sql`AND c.mode = ${mode}` : sql``}${cursorSql}
+    `
+    const count = db.all<number>(countQuery)[0]
+    if (!count) {
+      return { items: [] }
     }
 
     const searchQuery = sql`
@@ -70,59 +78,67 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
     `
 
     const results = db.all<FtsCoin>(searchQuery)
-    const hasMore = results.length > limit
-    const coins = hasMore ? results.slice(0, limit) : results
-
-    let nextCursor: string | undefined
-    if (hasMore) {
-      const lastCoin = coins[coins.length - 1]!
-      nextCursor = sortBy === 'recent' ? `${lastCoin.createdAt}:${lastCoin.id}` : `${lastCoin.id}`
-    }
-
-    return {
-      items: coins.map(mapFn),
-      nextCursor,
-    }
+    return toResponse(params, results, count)
   }
 
-  // Non-search query with cursor
-  let cursorSql = sql``
-  if (cursor && sortBy === 'recent') {
-    const [createdAt, id] = cursor.split(':')
-    cursorSql = sql` AND (created_at < ${createdAt} OR (created_at = ${createdAt} AND id < ${parseInt(id)}))`
-  } else if (cursor) {
-    cursorSql = sql` AND id > ${parseInt(cursor)}`
-  }
+  const cursorSql = buildCursorSql(cursor, sortBy)
 
   const allCoinsQuery = sql`
     SELECT 
-      id, 
-      name,
-      ticker,
-      tagline,
-      description,
-      wallet_address as walletAddress,
-      created_at AS createdAt,
-      mode
-    FROM coins
+      c.id, 
+      c.name,
+      c.ticker,
+      c.tagline,
+      c.description,
+      c.wallet_address as walletAddress,
+      c.created_at AS createdAt,
+      c.mode
+    FROM coins c
     WHERE deleted_at IS NULL
-      ${mode ? sql`AND mode = ${mode}` : sql``}${cursorSql}
-    ORDER BY ${sortBy === 'recent' ? sql`created_at DESC, id DESC` : sql`id ASC`}
+      ${mode ? sql`AND c.mode = ${mode}` : sql``}${cursorSql}
+    ORDER BY ${sortBy === 'recent' ? sql`c.created_at DESC, c.id DESC` : sql`c.id ASC`}
     LIMIT ${limit + 1}
   `
+  const count = await db.$count(coins)
 
   const results = db.all<FtsCoin>(allCoinsQuery)
-  const hasMore = results.length > limit
-  const coins = hasMore ? results.slice(0, limit) : results
+  return toResponse(params, results, count)
+}
 
-  let nextCursor: string | undefined
-  if (hasMore) {
-    const lastCoin = coins[coins.length - 1]!
-    nextCursor = sortBy === 'recent' ? `${lastCoin.createdAt}:${lastCoin.id}` : `${lastCoin.id}`
+const buildCursorSql = (cursor: string | undefined, sortBy: SortBy) => {
+  if (!cursor) {
+    return sql``
   }
+
+  const { id, date } = decodeCursor(cursor)
+
+  if (sortBy === 'recent') {
+    return sql`AND (c.created_at < ${date} OR (c.created_at = ${date} AND c.id < ${id}))`
+  }
+  return sql`AND c.id > ${id}`
+}
+
+const toResponse = (params: SearchParams, items: FtsCoin[], count?: number) => {
+  if (!items.length) {
+    return { items: [] }
+  }
+  const { sortBy, limit, mapFn } = params
+
+  const hasMore = items.length > limit
+  const coins = hasMore ? items.slice(0, limit) : items
+
+  if (!hasMore) {
+    return {
+      items: coins.map(mapFn),
+    }
+  }
+
+  const last = coins[coins.length - 1]!
+  const nextCursor = sortBy === 'recent' ? encodeCursor(last.id, last.createdAt) : encodeCursor(last.id)
 
   return {
     items: coins.map(mapFn),
     nextCursor,
+    count
   }
 }

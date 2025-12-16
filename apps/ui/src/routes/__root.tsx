@@ -3,6 +3,7 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Navbar from '../components/Navbar'
+import { Footer } from '@/components/Footer'
 import { WalletProvider } from '@/wallet/WalletProvider'
 import { ErrorPage } from '@/components/ErrorPage'
 
@@ -14,6 +15,7 @@ function RootComponent() {
         <main className="flex-1">
           <Outlet />
         </main>
+        <Footer />
         <TanStackDevtools
           config={{
             position: 'bottom-right',
