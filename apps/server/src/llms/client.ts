@@ -9,6 +9,7 @@ import { MODEL_CAPABILITIES } from './capabilities'
 import { jsonParse } from '../shared/json'
 import { withEnforcedSchema } from './prompts'
 import { memeCoinResponseExample } from './examples'
+import { logger } from '../shared/logger'
 
 export interface LLMClient {
   genCoin(prompt: Prompt): Promise<LLMCoinResp>
@@ -30,7 +31,16 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
             ...modelParams,
           })
 
-          console.log({ usage, finishReason })
+          logger.debug(
+            {
+              usage,
+              finishReason,
+              provider: options.provider,
+              modelId: options.modelId,
+              mode: 'schema',
+            },
+            'LLM generation completed with schema',
+          )
 
           return LLMCoinRespSchema.parse(object)
         }
@@ -47,11 +57,29 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
           ...modelParams,
         })
 
-        console.log({ text, usage, finishReason })
+        logger.debug(
+          {
+            usage,
+            finishReason,
+            responseLength: text.length,
+            provider: options.provider,
+            modelId: options.modelId,
+            mode: 'text',
+          },
+          'LLM generation completed without schema',
+        )
 
         return LLMCoinRespSchema.parse(jsonParse(text))
       } catch (error) {
-        console.error('Error generating coins coin prompt:', error)
+        logger.error(
+          {
+            err: error,
+            provider: options.provider,
+            modelId: options.modelId,
+            promptLength: prompt.text.length,
+          },
+          'Failed to generate meme coin from LLM',
+        )
         throw error
       }
     },

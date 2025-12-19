@@ -17,6 +17,14 @@ export const appEnvSchema = z.object({
     return val ? val.split(',').map((x) => x.trim()) : '*'
   }),
   APP_ORIGIN: z.string().optional().default('http://localhost:1312'),
+  LOG_LEVEL: z
+    .enum(['debug', 'info', 'warn', 'error', 'fatal'])
+    .optional()
+    .default('info'),
+  NODE_ENV: z
+    .enum(['development', 'production', 'test'])
+    .optional()
+    .default('development'),
 })
 
 export const appEnv = appEnvSchema.parse(Bun.env)

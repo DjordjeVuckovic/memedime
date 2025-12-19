@@ -4,6 +4,7 @@ POST {{base}}/api/v1/coins
 Content-Type: application/json
 
 {
+  "mode": "random",
   "prompt": "Trump coin with a funny slogan"
 }
 

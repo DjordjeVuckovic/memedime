@@ -7,6 +7,7 @@ import { spinEmojis } from './emojis'
 import { LLMCoinResp } from '../llms/schemas'
 import { eq, isNull, and } from 'drizzle-orm'
 import { omit } from '../shared/types'
+import { logger } from '../shared/logger'
 import {
   CoinCombos,
   Mode,
@@ -29,7 +30,17 @@ export type GenCoinParams = {
 export const generateCoin = async ({ req, llmClient }: GenCoinParams): Promise<CoinResp> => {
   const { prompt, combos } = createPrompt(req)
   const response: LLMCoinResp = await withRetry(() => llmClient.genCoin(prompt))
-  console.log(response)
+
+  logger.info(
+    {
+      coinName: response.name,
+      ticker: response.ticker,
+      mode: req.mode,
+      hasContext: !!req.prompt,
+      tokenomics: response.tokenomics,
+    },
+    'Meme coin generated successfully',
+  )
 
   const {id, createdAt } = await createDbCoin(req.mode, response, req.prompt, combos)
   return CoinSchema.parse({

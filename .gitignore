@@ -16,3 +16,5 @@ out/
 
 **/*.db
 **/*.db-*
+
+.claude/settings.local.json

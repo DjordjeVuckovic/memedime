@@ -105,7 +105,7 @@ export const CoinsRespSchema = z.object(
   {
     items: CoinItemSchema.array(),
     nextCursor: z.string().optional(),
-    count: z.number().optional().default(0),
+    total: z.number().optional().catch(0),
   },
 )
 

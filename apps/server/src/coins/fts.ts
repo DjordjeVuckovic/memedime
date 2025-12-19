@@ -4,6 +4,7 @@ import { Coin, coins } from './db.ts'
 import { sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { decodeCursor, encodeCursor } from '../shared/pagination.ts'
+import { logger } from '../shared/logger'
 
 export const buildFtsMatch = (query: string): string => {
   const term = query.trim().toLowerCase()
@@ -28,8 +29,21 @@ type MapFn = (coin: FtsCoin) => CoinItem
 type SearchParams = z.infer<typeof SearchReqSchema> & { mapFn: MapFn }
 
 export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> => {
+  const start = Date.now()
   const { q, mode, sortBy, limit, cursor } = params
   const hasSearchQuery = q && q.trim() !== '' && q !== '*'
+
+  logger.debug(
+    {
+      query: q,
+      mode,
+      sortBy,
+      limit,
+      hasCursor: !!cursor,
+      hasSearchQuery,
+    },
+    'Executing FTS search',
+  )
 
   if (hasSearchQuery) {
     const ftsQuery = buildFtsMatch(q)
@@ -78,14 +92,28 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
     `
 
     const results = db.all<FtsCoin>(searchQuery)
-    return toResponse(params, results, count)
+    const response = toResponse(params, results, count)
+
+    const duration = Date.now() - start
+    logger.info(
+      {
+        query: q,
+        resultCount: response.items.length,
+        duration,
+        hasMore: !!response.nextCursor,
+        searchType: 'fts',
+      },
+      'FTS search completed',
+    )
+
+    return response
   }
 
   const cursorSql = buildCursorSql(cursor, sortBy)
 
   const allCoinsQuery = sql`
-    SELECT 
-      c.id, 
+    SELECT
+      c.id,
       c.name,
       c.ticker,
       c.tagline,
@@ -102,7 +130,21 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
   const count = await db.$count(coins)
 
   const results = db.all<FtsCoin>(allCoinsQuery)
-  return toResponse(params, results, count)
+  const response = toResponse(params, results, count)
+
+  const duration = Date.now() - start
+  logger.info(
+    {
+      query: q,
+      resultCount: response.items.length,
+      duration,
+      hasMore: !!response.nextCursor,
+      searchType: 'all',
+    },
+    'FTS search completed',
+  )
+
+  return response
 }
 
 const buildCursorSql = (cursor: string | undefined, sortBy: SortBy) => {
@@ -118,7 +160,7 @@ const buildCursorSql = (cursor: string | undefined, sortBy: SortBy) => {
   return sql`AND c.id > ${id}`
 }
 
-const toResponse = (params: SearchParams, items: FtsCoin[], count?: number) => {
+const toResponse = (params: SearchParams, items: FtsCoin[], total?: number) => {
   if (!items.length) {
     return { items: [] }
   }
@@ -139,6 +181,6 @@ const toResponse = (params: SearchParams, items: FtsCoin[], count?: number) => {
   return {
     items: coins.map(mapFn),
     nextCursor,
-    count
+    total,
   }
 }

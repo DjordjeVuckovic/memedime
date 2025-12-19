@@ -1,5 +1,5 @@
 {
-  "name": "aixmeme",
+  "name": "memedime",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -8,8 +8,7 @@
   "scripts": {
     "dev:all": "bun --filter '*' dev",
     "dev:server": "bun --filter @mimedime/server dev",
-    "dev:ui": "bun --filter @memedime/ui dev",
-    "cp:emojis": "cp  -r ./apps/server/static/emojis.json ./apps/ui/src/emojis.json"
+    "dev:ui": "bun --filter @memedime/ui dev"
   },
   "devDependencies": {
     "@types/bun": "^1.3.4",

@@ -1,4 +1,5 @@
 import { jsonrepair } from 'jsonrepair'
+import { logger } from './logger'
 
 export type JsonParseOptions = {
   skipRepair: boolean
@@ -17,7 +18,15 @@ export const jsonParse = <T = any>(
 
     return JSON.parse(cleaned) as T
   } catch (error) {
-    console.error('JSON parse error:', error)
+    logger.warn(
+      {
+        err: error,
+        inputLength: jsonString.length,
+        inputPreview: jsonString.substring(0, 100),
+        skipRepair,
+      },
+      'JSON parse failed, returning default value',
+    )
     return defaultValue
   }
 }
@@ -26,7 +35,14 @@ export const repairJsonText = (jsonString: string): string => {
   try {
     return jsonrepair(repairLLMJson(jsonString))
   } catch (e) {
-    console.error('Error repairing JSON text:', e)
+    logger.debug(
+      {
+        err: e,
+        inputLength: jsonString.length,
+        inputPreview: jsonString.substring(0, 100),
+      },
+      'JSON repair failed, returning original text',
+    )
     return jsonString
   }
 }
@@ -37,7 +53,7 @@ const repairLLMJson = (text: string): string => {
   // Remove md code blocks
   cleaned = cleaned.replace(/```(?:json)?\s*/g, '').replace(/```\s*/g, '')
 
-  // Remove thousands separators in numbers (100,000,000 -> 100000000)
+  // Remove thousands of separators in numbers (100,000,000 -> 100000000)
   // This regex looks for numbers with commas that aren't inside strings
   cleaned = cleaned.replace(/:\s*(\d{1,3}(?:,\d{3})+)(?=\s*[,}\]])/g, (match, num) => {
     return ': ' + num.replace(/,/g, '')
