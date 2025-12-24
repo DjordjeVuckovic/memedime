@@ -278,5 +278,13 @@ The codebase is currently scaffolded. When implementing:
 - x402 protocol for micropayments (research implementation)
 - Context input is **optional but powerful** - drives replayability
 - AI should use Groq or similar fast inference
-- Focus on **viral shareability** - Twitter integration is key
+- Focus on **viral shareability** – Twitter integration is key
 - The "magic moment" is when users realize context actually works
+
+# Code style
+- Use ES modules (import/export) syntax, not CommonJS (require)
+- Destructure imports when possible (eg. import { foo } from 'bar')
+
+# Workflow
+- Be sure to typecheck when you’re done making a series of code changes
+- Prefer running single tests, and not the whole test suite, for performance

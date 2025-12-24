@@ -9,6 +9,12 @@ type RetryOptions = {
   jitter?: boolean
 }
 
+export const DEFAULT_RETRIES = 2
+export const DEFAULT_DELAY_MS = 1000
+export const DEFAULT_EXPONENT = 2
+export const DEFAULT_MAX_DELAY_MS = 30_000
+export const DEFAULT_JITTER = true
+
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const withRetry = async <T>(
@@ -16,12 +22,16 @@ export const withRetry = async <T>(
   options?: RetryOptions
 ): Promise<T> => {
   const { retires, delayMs, maxDelayMs, jitter, exponent } = {
-    retires: 2,
-    exponent: 2,
-    jitter: true,
-    delayMs: 1000,
-    maxDelayMs: 30_000,
+    retires: DEFAULT_RETRIES,
+    exponent: DEFAULT_EXPONENT,
+    jitter: DEFAULT_JITTER,
+    delayMs: DEFAULT_DELAY_MS,
+    maxDelayMs: DEFAULT_MAX_DELAY_MS,
     ...options,
+  }
+
+  if(retires < 1) {
+    return fn()
   }
   let errors: unknown[] = [];
 
@@ -41,5 +51,5 @@ export const withRetry = async <T>(
     }
   }
 
-  throw new AggregateError(errors, `All ${retires + 1} attempts failed`);
+  throw new AggregateError(errors, `All ${retires} attempts failed`);
 }

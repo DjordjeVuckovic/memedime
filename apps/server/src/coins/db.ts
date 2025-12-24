@@ -17,7 +17,7 @@ export const coins = sqliteTable(
     mode: text('mode').notNull(),
     combos: text('combos', { mode: 'json' }),
     prompt: text('prompt'),
-    walletAddress: text('wallet_address').default('0x0000000000000000000000000000000000000000'),
+    walletAddress: text('wallet_address').default('1nc1nerator11111111111111111111111111111111'),
     createdAt: integer('created_at', { mode: 'timestamp' })
       .$defaultFn(() => new Date())
       .notNull(),

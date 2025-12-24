@@ -5,6 +5,12 @@
       "Bash(cd:*)",
       "Bash(rg:*)",
       "Bash(lsa:*)"
+    ],
+    "deny": [
+      "Read(./**/.env)"
+    ],
+    "ask": [
+      "Bash(rm:*)"
     ]
   }
 }

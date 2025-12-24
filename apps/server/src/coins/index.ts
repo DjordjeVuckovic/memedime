@@ -6,7 +6,6 @@ import { validator as zValidator, resolver, describeRoute } from 'hono-openapi'
 import { z } from 'zod'
 import {
   CoinRespSchema,
-  CoinsResp,
   CoinsRespSchema,
   GenCoinReqUnionSchema,
   ModeSchema,

@@ -3,6 +3,10 @@ import { appEnv } from './env'
 
 const isDevelopment = appEnv.NODE_ENV !== 'production'
 
+export const createChildLogger = (context: Record<string, any>) => {
+  return logger.child(context)
+}
+
 export const logger = pino({
   level: appEnv.LOG_LEVEL,
 
@@ -42,10 +46,6 @@ export const logger = pino({
     },
   },
 })
-
-export const createChildLogger = (context: Record<string, any>) => {
-  return logger.child(context)
-}
 
 export const LogLevel = {
   DEBUG: 'debug' as const,
