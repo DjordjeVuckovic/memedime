@@ -24,6 +24,7 @@ export const logger = pino({
           translateTime: 'HH:MM:ss Z',
           ignore: 'pid,hostname',
           singleLine: false,
+          minimumLevel: 'trace',
         },
       }
     : undefined,

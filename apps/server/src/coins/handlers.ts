@@ -29,23 +29,23 @@ export type GenCoinParams = {
 }
 export const generateCoin = async ({ req, llmClient }: GenCoinParams): Promise<CoinResp> => {
   const { prompt, combos } = createPrompt(req)
-  const response: LLMCoinResp = await withRetry(() => llmClient.genCoin(prompt))
+  const llmCoin: LLMCoinResp = await withRetry(() => llmClient.genCoin(prompt))
 
   logger.info(
     {
-      coinName: response.name,
-      ticker: response.ticker,
+      coinName: llmCoin.name,
+      ticker: llmCoin.ticker,
       mode: req.mode,
       hasContext: !!req.prompt,
-      tokenomics: response.tokenomics,
+      tokenomics: llmCoin.tokenomics,
     },
     'Meme coin generated successfully',
   )
 
-  const {id, createdAt } = await createDbCoin(req.mode, response, req.prompt, combos)
+  const {id, createdAt } = await createDbCoin(req.mode, llmCoin, req.prompt, combos, req.walletAddress)
   return CoinSchema.parse({
     id,
-    ...response,
+    ...llmCoin,
     mode: req.mode,
     combos,
     createdAt: new Date(createdAt).toISOString(),
@@ -84,7 +84,7 @@ const createPrompt = (req: GenCoinUnion) => {
   }
 }
 
-const createDbCoin = async (mode: Mode, coin: LLMCoinResp, prompt?: string, combos?: CoinCombos) => {
+const createDbCoin = async (mode: Mode, coin: LLMCoinResp, prompt?: string, combos?: CoinCombos, walletAddress?: string) => {
   const { name, ticker, supply, tokenomics, tagline, marketing, description } = coin
 
   const [resp] = await db
@@ -103,6 +103,7 @@ const createDbCoin = async (mode: Mode, coin: LLMCoinResp, prompt?: string, comb
       prompt: prompt,
       mode: mode,
       combos: combos,
+      walletAddress: walletAddress,
     } as NewCoin)
     .returning({
       id: coins.id,

@@ -1,15 +1,16 @@
-import { Database } from "bun:sqlite";
-import { drizzle } from "drizzle-orm/bun-sqlite";
+import { createClient } from "@libsql/client";
+import { drizzle } from "drizzle-orm/libsql";
 import { appEnv } from '../shared/env'
 import { logger } from '../shared/logger'
 
-export const sqlite = new Database(appEnv.DB_URL);
+const client = createClient({
+  url: appEnv.DB_URL,
+  authToken: appEnv.DB_AUTH_TOKEN,
+});
 
-if (appEnv.USE_WAL) {
-  logger.info('Enabling WAL mode for SQLite database')
-  sqlite.run('PRAGMA journal_mode = WAL;')
-}
+export const db = drizzle({ client });
 
-export const db = drizzle({ client: sqlite});
-
-logger.info({ dbUrl: appEnv.DB_URL }, 'Database connection initialized')
+logger.info({
+  dbUrl: appEnv.DB_URL.includes('libsql') ? 'Turso (remote)' : 'SQLite (local)',
+  isProduction: appEnv.NODE_ENV === 'production'
+}, 'Database connection initialized')

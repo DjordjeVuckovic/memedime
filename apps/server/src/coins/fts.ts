@@ -50,7 +50,7 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
 
     const cursorSql = buildCursorSql(cursor, sortBy)
     const countQuery = sql`
-        SELECT count(*)
+        SELECT count(*) as count
         FROM coins c
                INNER JOIN coins_fts fts ON c.id = fts.rowid
         WHERE
@@ -58,13 +58,17 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
           AND c.deleted_at IS NULL
           ${mode ? sql`AND c.mode = ${mode}` : sql``}${cursorSql}
     `
-    const count = db.all<number>(countQuery)[0]
+
+    // Execute count query
+    const countResult = await db.all<{ count: number }>(countQuery)
+    const count = Number(countResult[0]?.count) || 0
+
     if (!count) {
       return { items: [] }
     }
 
     const searchQuery = sql`
-      SELECT 
+      SELECT
         c.id,
         c.name,
         c.ticker,
@@ -73,7 +77,7 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
         c.mode,
         c.wallet_address as walletAddress,
         c.created_at AS createdAt,
-        CASE 
+        CASE
           WHEN UPPER(c.ticker) = UPPER(${q}) THEN 10000
           WHEN LOWER(c.name) = LOWER(${q}) THEN 5000
           WHEN UPPER(c.ticker) LIKE UPPER(${q}) || '%' THEN 1000
@@ -82,16 +86,18 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
         END AS rank
       FROM coins c
       INNER JOIN coins_fts fts ON c.id = fts.rowid
-      WHERE 
+      WHERE
         coins_fts MATCH ${ftsQuery}
         AND c.deleted_at IS NULL
         ${mode ? sql`AND c.mode = ${mode}` : sql``}${cursorSql}
-      ORDER BY 
+      ORDER BY
         ${sortBy === 'recent' ? sql`c.created_at DESC, c.id DESC` : sql`rank DESC, c.id ASC`}
       LIMIT ${limit + 1}
     `
 
-    const results = db.all<FtsCoin>(searchQuery)
+    // Execute search query
+    const results = await db.all<FtsCoin>(searchQuery)
+
     const response = toResponse(params, results, count)
 
     const duration = Date.now() - start
@@ -127,9 +133,14 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
     ORDER BY ${sortBy === 'recent' ? sql`c.created_at DESC, c.id DESC` : sql`c.id ASC`}
     LIMIT ${limit + 1}
   `
-  const count = await db.$count(coins)
 
-  const results = db.all<FtsCoin>(allCoinsQuery)
+  // Get count and results
+  const countQuery = sql`SELECT count(*) as count FROM coins WHERE deleted_at IS NULL ${mode ? sql`AND mode = ${mode}` : sql``}`
+  const countResult = await db.all<{ count: number }>(countQuery)
+  const count = Number(countResult[0]?.count) || 0
+
+  const results = await db.all<FtsCoin>(allCoinsQuery)
+
   const response = toResponse(params, results, count)
 
   const duration = Date.now() - start

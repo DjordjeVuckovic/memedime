@@ -25,6 +25,7 @@ export type CoinCombos = z.infer<typeof CoinCombosSchema>
 
 export const GenCoinReqSchema = z.object({
   mode: ModeSchema,
+  // TODO: remove this when x402 integration is done
   walletAddress: z.string().optional(),
   prompt: z.string().optional(),
 })

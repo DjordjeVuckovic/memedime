@@ -4,7 +4,7 @@ const metaEnv = import.meta.env
 
 export const appEnvSchema = z.object({
   API_URL: z.string().optional().default('http://localhost:1312'),
-  GITHUB_REPO_URL: z.string().optional().default('https://github.com/memedime/memedime'),
+  GITHUB_REPO_URL: z.string().optional().default('https://github.com/DjordjeVuckovic/memedime'),
   X_PROFILE_URL: z.string().optional().default('https://x.com/memedime'),
   REDDIT_URL: z.string().optional().default('https://reddit.com/r/memedime'),
 })

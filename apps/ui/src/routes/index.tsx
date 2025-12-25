@@ -46,10 +46,14 @@ function HomePage() {
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"
-               style={{ animationDelay: '700ms' }} />
-          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-cyan-400/10 rounded-full blur-3xl animate-pulse"
-               style={{ animationDelay: '1400ms' }} />
+          <div
+            className="absolute bottom-20 right-10 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: '700ms' }}
+          />
+          <div
+            className="absolute top-1/2 left-1/2 w-64 h-64 bg-cyan-400/10 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: '1400ms' }}
+          />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
@@ -89,13 +93,7 @@ function HomePage() {
 
             {/* CTA Button */}
             <div className="pt-8 animate-slide-up" style={{ animationDelay: '400ms' }}>
-              <Button
-                variant="gold"
-                size="xl"
-                glow
-                className="hover-shake"
-                onClick={handleCTAClick}
-              >
+              <Button variant="gold" size="xl" glow className="hover-shake" onClick={handleCTAClick}>
                 {connected ? <Sparkles className="w-5 h-5" /> : <ConnectIcon />}
                 {connected ? 'GENERATE' : 'CONNECT & GEN'}
               </Button>
@@ -209,45 +207,52 @@ function HomePage() {
                 <CardTitle className="text-xl">CONNECT</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Link your wallet. Phantom, Solflare, whatever.
-                </CardDescription>
+                <CardDescription>Link your wallet. Solflare, whatever.</CardDescription>
               </CardContent>
             </Card>
 
-            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '100ms', boxShadow: '6px 6px 0px rgb(34 211 238)' }}>
+            <Card
+              glow
+              glowColor="purple"
+              className="hover-lift"
+              style={{ animationDelay: '100ms', boxShadow: '6px 6px 0px rgb(34 211 238)' }}
+            >
               <CardHeader>
                 <div className="text-6xl font-black text-cyan-400 mb-3">02</div>
                 <CardTitle className="text-xl">GENERATE</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Drop $0.10 USDC. AI creates your coin.
-                </CardDescription>
+                <CardDescription>Drop $0.10 USDC. AI creates your coin.</CardDescription>
               </CardContent>
             </Card>
 
-            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '200ms', boxShadow: '6px 6px 0px rgb(192 132 252)' }}>
+            <Card
+              glow
+              glowColor="purple"
+              className="hover-lift"
+              style={{ animationDelay: '200ms', boxShadow: '6px 6px 0px rgb(192 132 252)' }}
+            >
               <CardHeader>
                 <div className="text-6xl font-black text-purple-400 mb-3">03</div>
                 <CardTitle className="text-xl">AI COOKS</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  AI generates a complete coin concept. Name, ticker, the works.
-                </CardDescription>
+                <CardDescription>AI generates a complete coin concept. Name, ticker, the works.</CardDescription>
               </CardContent>
             </Card>
 
-            <Card glow glowColor="purple" className="hover-lift" style={{ animationDelay: '300ms', boxShadow: '6px 6px 0px rgb(74 222 128)' }}>
+            <Card
+              glow
+              glowColor="purple"
+              className="hover-lift"
+              style={{ animationDelay: '300ms', boxShadow: '6px 6px 0px rgb(74 222 128)' }}
+            >
               <CardHeader>
                 <div className="text-6xl font-black text-green-400 mb-3">04</div>
                 <CardTitle className="text-xl">SHARE IT</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Flex your creation on Twitter, share with frens, go viral.
-                </CardDescription>
+                <CardDescription>Flex your creation on Twitter, share with frens, go viral.</CardDescription>
               </CardContent>
             </Card>
           </div>
@@ -264,9 +269,7 @@ function HomePage() {
                 LIVE STATS
                 <TrendingUp className="w-10 h-10" />
               </CardTitle>
-              <CardDescription className="text-lg">
-                Real degens. Real spins. Real coins.
-              </CardDescription>
+              <CardDescription className="text-lg">Real degens. Real spins. Real coins.</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-6">
@@ -274,33 +277,25 @@ function HomePage() {
                   <div className="text-6xl font-black font-mono text-yellow-400 group-hover:scale-110 transition-transform">
                     {stats?.coinsToday ?? '...'}
                   </div>
-                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">
-                    Coins Today
-                  </div>
+                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">Coins Today</div>
                 </div>
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-cyan-400 group-hover:scale-110 transition-transform">
                     {stats?.totalCoins.toLocaleString() ?? '...'}
                   </div>
-                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">
-                    Total Generated
-                  </div>
+                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">Total Generated</div>
                 </div>
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-purple-400 group-hover:scale-110 transition-transform">
                     {stats?.uniqueWallets ?? '...'}
                   </div>
-                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">
-                    Unique Wallets
-                  </div>
+                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">Unique Wallets</div>
                 </div>
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-green-400 group-hover:scale-110 transition-transform">
                     24/7
                   </div>
-                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">
-                    Uptime
-                  </div>
+                  <div className="text-sm text-white/60 mt-2 font-bold uppercase">Uptime</div>
                 </div>
               </div>
               <div className="mt-8 pt-8 border-t-4 border-white/10">
@@ -337,7 +332,12 @@ function HomePage() {
             <div className="group">
               <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-cyan-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(34,211,238,1)]">
                 <div className="flex flex-col items-center gap-3">
-                  <img src={ReactIcon} alt="React" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <img
+                    src={ReactIcon}
+                    alt="React"
+                    className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                  />
                   <span className="text-sm font-black text-white uppercase">React 19</span>
                 </div>
               </div>
@@ -347,7 +347,12 @@ function HomePage() {
             <div className="group">
               <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-yellow-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(251,191,36,1)]">
                 <div className="flex flex-col items-center gap-3">
-                  <img src={TanStackIcon} alt="TanStack" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <img
+                    src={TanStackIcon}
+                    alt="TanStack"
+                    className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                  />
                   <span className="text-sm font-black text-white uppercase">TanStack</span>
                 </div>
               </div>
@@ -357,7 +362,12 @@ function HomePage() {
             <div className="group">
               <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-purple-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(192,132,252,1)]">
                 <div className="flex flex-col items-center gap-3">
-                  <img src={SolanaIcon} alt="Solana" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <img
+                    src={SolanaIcon}
+                    alt="Solana"
+                    className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                  />
                   <span className="text-sm font-black text-white uppercase">Solana</span>
                 </div>
               </div>
@@ -367,7 +377,12 @@ function HomePage() {
             <div className="group">
               <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-orange-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(251,146,60,1)]">
                 <div className="flex flex-col items-center gap-3">
-                  <img src={HonoIcon} alt="Hono" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <img
+                    src={HonoIcon}
+                    alt="Hono"
+                    className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                  />
                   <span className="text-sm font-black text-white uppercase">Hono</span>
                 </div>
               </div>
@@ -377,7 +392,12 @@ function HomePage() {
             <div className="group">
               <div className="bg-white/5 hover:bg-white/10 border-4 border-white/20 hover:border-green-400 p-6 transition-all hover:-translate-y-2 brutal-shadow-sm hover:shadow-[6px_6px_0px_rgba(74,222,128,1)]">
                 <div className="flex flex-col items-center gap-3">
-                  <img src={SQLiteIcon} alt="SQLite" className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all" style={{ filter: 'brightness(0) invert(1)' }} />
+                  <img
+                    src={SQLiteIcon}
+                    alt="SQLite"
+                    className="w-16 h-16 brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all"
+                    style={{ filter: 'brightness(0) invert(1)' }}
+                  />
                   <span className="text-sm font-black text-white uppercase">SQLite</span>
                 </div>
               </div>
@@ -437,12 +457,8 @@ function HomePage() {
                             {coin.combos.vibe.emoji}
                           </div>
                         )}
-                        <h3 className={`text-2xl font-black ${textColors[index % 3]}`}>
-                          {coin.ticker}
-                        </h3>
-                        <p className="text-sm text-white/70 font-bold">
-                          "{coin.tagline}"
-                        </p>
+                        <h3 className={`text-2xl font-black ${textColors[index % 3]}`}>{coin.ticker}</h3>
+                        <p className="text-sm text-white/70 font-bold">"{coin.tagline}"</p>
                         <div className="pt-4 border-t-2 border-white/10">
                           <div className="text-xs text-white/50 font-mono">
                             {new Date(coin.createdAt || '').toLocaleString('en-US', {
@@ -460,20 +476,12 @@ function HomePage() {
               })
             ) : (
               // Fallback when no data
-              <div className="col-span-3 text-center text-white/50 py-12">
-                Loading recent coins...
-              </div>
+              <div className="col-span-3 text-center text-white/50 py-12">Loading recent coins...</div>
             )}
           </div>
 
           <div className="text-center mt-12">
-            <Button
-              variant="gold"
-              size="lg"
-              glow
-              className="hover-shake"
-              onClick={handleCTAClick}
-            >
+            <Button variant="gold" size="lg" glow className="hover-shake" onClick={handleCTAClick}>
               <Sparkles className="w-5 h-5" />
               CREATE YOUR OWN
             </Button>
@@ -499,13 +507,7 @@ function HomePage() {
                   <span className="text-cyan-400"> Only $0.10 per spin.</span>
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-                  <Button
-                    variant="gold"
-                    size="xl"
-                    glow
-                    className="hover-shake text-xl px-12"
-                    onClick={handleCTAClick}
-                  >
+                  <Button variant="gold" size="xl" glow className="hover-shake text-xl px-12" onClick={handleCTAClick}>
                     <Sparkles className="w-6 h-6" />
                     {connected ? 'START GENERATING' : 'CONNECT WALLET'}
                   </Button>
