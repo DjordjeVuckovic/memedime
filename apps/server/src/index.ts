@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { Scalar } from '@scalar/hono-api-reference'
 import memeRouter from './coins'
+import statsRouter from './stats'
 import { openAPIRouteHandler } from 'hono-openapi'
 import { appEnv } from './shared/env'
 import { createMarkdownFromOpenApi } from '@scalar/openapi-to-markdown'
@@ -9,7 +10,6 @@ import { logger } from './shared/logger'
 import { requestLogger } from './middleware/logging'
 import './types/hono'
 import { HTTPException } from 'hono/http-exception'
-const APP_ORIGIN = appEnv.APP_ORIGIN
 
 const app = new Hono({
   strict: false,
@@ -25,6 +25,7 @@ app.use(
 )
 
 app.route('/api/', memeRouter)
+app.route('/api/', statsRouter)
 
 app.get(
   '/openapi.json',

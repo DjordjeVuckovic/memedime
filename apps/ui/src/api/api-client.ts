@@ -6,6 +6,7 @@ import type {
   ModeSchema,
   SortBySchema,
   CoinsRespSchema,
+  GlobalStatsRespSchema,
 } from '@memedime/contracts'
 import type { z } from 'zod'
 
@@ -18,6 +19,7 @@ export type SocialCoinReq = z.infer<typeof SocialCoinReqSchema>
 export type Mode = z.infer<typeof ModeSchema>
 export type SortBy = z.infer<typeof SortBySchema>
 export type CoinsResp = z.infer<typeof CoinsRespSchema>
+export type GlobalStatsResp = z.infer<typeof GlobalStatsRespSchema>
 
 const request = async <T>(endpoint: string, options?: RequestInit): Promise<T> => {
   const url = `${API_BASE_URL}${endpoint}`
@@ -92,4 +94,12 @@ export const searchCoins = async (
   }
 
   return request<CoinsResp>(`/api/v1/coins?${params.toString()}`)
+}
+
+export const getGlobalStats = async (): Promise<GlobalStatsResp> => {
+  return request<GlobalStatsResp>('/api/v1/stats')
+}
+
+export const getRecentCoins = async (limit: number = 3): Promise<CoinsResp> => {
+  return searchCoins('', undefined, 'recent', limit, undefined)
 }

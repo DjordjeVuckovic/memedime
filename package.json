@@ -12,7 +12,8 @@
   },
   "devDependencies": {
     "@types/bun": "^1.3.4",
-    "drizzle-kit": "^0.31.7"
+    "drizzle-kit": "^0.31.7",
+    "wrangler": "^4.54.0"
   },
   "peerDependencies": {
     "typescript": "^5"

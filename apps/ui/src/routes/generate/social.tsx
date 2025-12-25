@@ -6,7 +6,7 @@ import { Toast, useToast } from '@/components/ui'
 import { SocialMode } from '@/components/generate/SocialMode'
 import { CustomizationOptions, type CoinVibe } from '@/components/generate/CustomizationOptions'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
-import { useGenerateCoin } from '@/routes/coins/queries'
+import { useGenerateCoin } from '@/routes/coins/-queries.ts'
 import { useWalletContext } from '@/wallet/WalletContext'
 
 export const Route = createFileRoute('/generate/social')({

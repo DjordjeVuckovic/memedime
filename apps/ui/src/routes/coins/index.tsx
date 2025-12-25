@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo, useCallback, useState, useEffect } from 'react'
 import { Search, TrendingUp, Clock, Sparkles, Loader2 } from 'lucide-react'
-import { useSearchCoins } from './queries'
+import { useSearchCoins } from './-queries.ts'
 import { useDebounce } from '@/hooks/useDebounce'
 import { type Mode, SearchReqSchema } from '@memedime/contracts'
 import { formatWalletAddress } from '@/wallet/util.ts'

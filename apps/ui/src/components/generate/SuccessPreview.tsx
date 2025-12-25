@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card'
 import { Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { CoinConfetti } from '@/components/CoinConfetti'
-import { CONFETTI_DURATION } from '@/routes/generate/util.ts'
+import { CONFETTI_DURATION } from '@/lib/const.ts'
 
 interface SuccessPreviewProps {
   coin: {

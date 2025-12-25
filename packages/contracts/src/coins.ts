@@ -88,6 +88,7 @@ export const CoinItemSchema = z.object({
   description: z.string().optional(),
   walletAddress: z.string().optional(),
   mode: ModeSchema,
+  combos: CoinCombosSchema.optional(),
   createdAt: z.preprocess(
     (val) => {
       if(typeof val === 'number') {

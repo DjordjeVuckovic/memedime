@@ -19,6 +19,7 @@ import TanStackIcon from '@/assets/icons/tanstack.svg'
 import SolanaIcon from '@/assets/icons/solana.svg'
 import HonoIcon from '@/assets/icons/hono.svg'
 import SQLiteIcon from '@/assets/icons/sqlite.svg'
+import { useGlobalStats, useRecentCoins } from '@/routes/stats/-queries.ts'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -28,6 +29,8 @@ function HomePage() {
   const { connected } = useWalletContext()
   const navigate = useNavigate()
   const [walletModalOpen, setWalletModalOpen] = useState(false)
+  const { data: stats } = useGlobalStats()
+  const { data: recentCoins } = useRecentCoins(3)
 
   const handleCTAClick = () => {
     if (connected) {
@@ -103,7 +106,7 @@ function HomePage() {
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-black/60 border-4 border-white/20 backdrop-blur font-mono text-sm text-green-400">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                 <span className="font-bold">LIVE:</span>
-                <span>1,247 SPINS</span>
+                <span>{stats?.totalSpins.toLocaleString() ?? '...'} SPINS</span>
                 <span className="text-white/40">•</span>
                 <span className="text-cyan-400">LAUNCH SOON</span>
               </div>
@@ -269,7 +272,7 @@ function HomePage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-6">
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-yellow-400 group-hover:scale-110 transition-transform">
-                    342
+                    {stats?.coinsToday ?? '...'}
                   </div>
                   <div className="text-sm text-white/60 mt-2 font-bold uppercase">
                     Coins Today
@@ -277,7 +280,7 @@ function HomePage() {
                 </div>
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-cyan-400 group-hover:scale-110 transition-transform">
-                    1,247
+                    {stats?.totalCoins.toLocaleString() ?? '...'}
                   </div>
                   <div className="text-sm text-white/60 mt-2 font-bold uppercase">
                     Total Generated
@@ -285,7 +288,7 @@ function HomePage() {
                 </div>
                 <div className="text-center group">
                   <div className="text-6xl font-black font-mono text-purple-400 group-hover:scale-110 transition-transform">
-                    89
+                    {stats?.uniqueWallets ?? '...'}
                   </div>
                   <div className="text-sm text-white/60 mt-2 font-bold uppercase">
                     Unique Wallets
@@ -411,7 +414,7 @@ function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-5xl sm:text-6xl font-black mb-4 uppercase tracking-tight">
-              <span className="bg-gradient-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-green-400 to-yellow-400 bg-clip-text text-transparent">
                 RECENT HITS
               </span>
             </h2>
@@ -419,53 +422,48 @@ function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Example Coin 1 */}
-            <Card glow glowColor="gold" className="hover-lift">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4">
-                  <div className="text-4xl mb-2">🦫🍕💎</div>
-                  <h3 className="text-2xl font-black text-yellow-400">$CAPYPIZZA</h3>
-                  <p className="text-sm text-white/70 font-bold">
-                    "The chillest coin in the metaverse. Diamond paws only."
-                  </p>
-                  <div className="pt-4 border-t-2 border-white/10">
-                    <div className="text-xs text-white/50 font-mono">2 HOURS AGO</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Example Coin 2 */}
-            <Card glow glowColor="purple" className="hover-lift">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4">
-                  <div className="text-4xl mb-2">🐸🌮🚀</div>
-                  <h3 className="text-2xl font-black text-purple-400">$FROGTACO</h3>
-                  <p className="text-sm text-white/70 font-bold">
-                    "Ribbit to riches. Taco Tuesday every day. To the moon."
-                  </p>
-                  <div className="pt-4 border-t-2 border-white/10">
-                    <div className="text-xs text-white/50 font-mono">5 HOURS AGO</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Example Coin 3 */}
-            <Card glow glowColor="green" className="hover-lift">
-              <CardContent className="pt-6">
-                <div className="text-center space-y-4">
-                  <div className="text-4xl mb-2">🦍🍔⚡</div>
-                  <h3 className="text-2xl font-black text-green-400">$APEBURG</h3>
-                  <p className="text-sm text-white/70 font-bold">
-                    "Ape together strong. Ape together hungry. Lightning speed."
-                  </p>
-                  <div className="pt-4 border-t-2 border-white/10">
-                    <div className="text-xs text-white/50 font-mono">8 HOURS AGO</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {recentCoins?.items && recentCoins.items.length > 0 ? (
+              recentCoins.items.map((coin, index) => {
+                const colors = ['gold', 'purple', 'green']
+                const textColors = ['text-yellow-400', 'text-purple-400', 'text-green-400']
+                return (
+                  <Card key={coin.id} glow glowColor={colors[index % 3] as any} className="hover-lift">
+                    <CardContent className="pt-6">
+                      <div className="text-center space-y-4">
+                        {coin.combos && (
+                          <div className="text-4xl mb-2">
+                            {coin.combos.animal.emoji}
+                            {coin.combos.food.emoji}
+                            {coin.combos.vibe.emoji}
+                          </div>
+                        )}
+                        <h3 className={`text-2xl font-black ${textColors[index % 3]}`}>
+                          {coin.ticker}
+                        </h3>
+                        <p className="text-sm text-white/70 font-bold">
+                          "{coin.tagline}"
+                        </p>
+                        <div className="pt-4 border-t-2 border-white/10">
+                          <div className="text-xs text-white/50 font-mono">
+                            {new Date(coin.createdAt || '').toLocaleString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit',
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })
+            ) : (
+              // Fallback when no data
+              <div className="col-span-3 text-center text-white/50 py-12">
+                Loading recent coins...
+              </div>
+            )}
           </div>
 
           <div className="text-center mt-12">
@@ -515,7 +513,7 @@ function HomePage() {
                 <div className="pt-6 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm font-bold text-white/60">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-                    <span>342 COINS TODAY</span>
+                    <span>{stats?.coinsToday ?? '...'} COINS TODAY</span>
                   </div>
                   <div className="text-white/40 hidden sm:block">•</div>
                   <div className="flex items-center gap-2">

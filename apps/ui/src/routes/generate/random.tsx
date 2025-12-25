@@ -6,7 +6,7 @@ import { Toast, useToast } from '@/components/ui'
 import { SlotMachine, type SlotMachineRef } from '@/components/slot/SlotMachine'
 import { CustomizationOptions, type CoinVibe } from '@/components/generate/CustomizationOptions'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
-import { useGenerateCoin } from '@/routes/coins/queries'
+import { useGenerateCoin } from '@/routes/coins/-queries.ts'
 import { useWalletContext } from '@/wallet/WalletContext'
 
 const PREVIEW_DELAY = 1_500
