@@ -2,7 +2,7 @@ import { LLMClient } from '../llms/client'
 import { toLLMPrompt } from '../llms/prompts'
 import { withRetry } from '../shared/resilience'
 import { coins, Coin, NewCoin } from './db'
-import { db } from '../db'
+import { getDb } from '../db'
 import { spinEmojis } from './emojis'
 import { LLMCoinResp } from '../llms/schemas'
 import { eq, isNull, and } from 'drizzle-orm'
@@ -87,7 +87,7 @@ const createPrompt = (req: GenCoinUnion) => {
 const createDbCoin = async (mode: Mode, coin: LLMCoinResp, prompt?: string, combos?: CoinCombos, walletAddress?: string) => {
   const { name, ticker, supply, tokenomics, tagline, marketing, description } = coin
 
-  const [resp] = await db
+  const [resp] = await getDb()
     .insert(coins)
     .values({
       name: name,
@@ -118,7 +118,7 @@ const createDbCoin = async (mode: Mode, coin: LLMCoinResp, prompt?: string, comb
 
 export const getCoinById = async (id: number): Promise<CoinResp | null> => {
   // prettier-ignore
-  const coin = await db
+  const coin = await getDb()
     .select()
     .from(coins)
     .where(and(eq(coins.id, id), isNull(coins.deletedAt)))

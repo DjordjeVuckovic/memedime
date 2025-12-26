@@ -1,4 +1,4 @@
-import { db } from '../db'
+import { getDb } from '../db'
 import { coins } from '../coins/db'
 import { sql, and, isNull, gte, ne, count } from 'drizzle-orm'
 import type { GlobalStatsResp } from '@memedime/contracts'
@@ -11,7 +11,7 @@ export const getGlobalStats = async (): Promise<GlobalStatsResp> => {
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000)
 
   // Total coins count
-  const totalCoinsResult = await db
+  const totalCoinsResult = await getDb()
     .select({ count: count() })
     .from(coins)
     .where(isNull(coins.deletedAt))
@@ -19,7 +19,7 @@ export const getGlobalStats = async (): Promise<GlobalStatsResp> => {
   const totalCoins = totalCoinsResult[0]?.count ?? 0
 
   // Coins today (last 24 hours)
-  const coinsTodayResult = await db
+  const coinsTodayResult = await getDb()
     .select({ count: count() })
     .from(coins)
     .where(and(isNull(coins.deletedAt), gte(coins.createdAt, oneDayAgo)))
@@ -27,7 +27,7 @@ export const getGlobalStats = async (): Promise<GlobalStatsResp> => {
   const coinsToday = coinsTodayResult[0]?.count ?? 0
 
   // Coins in last hour
-  const lastHourResult = await db
+  const lastHourResult = await getDb()
     .select({ count: count() })
     .from(coins)
     .where(and(isNull(coins.deletedAt), gte(coins.createdAt, oneHourAgo)))
@@ -35,7 +35,7 @@ export const getGlobalStats = async (): Promise<GlobalStatsResp> => {
   const lastHour = lastHourResult[0]?.count ?? 0
 
   // Unique wallets (excluding incinerator)
-  const uniqueWalletsResult = await db
+  const uniqueWalletsResult = await getDb()
     .select({ count: sql<number>`COUNT(DISTINCT ${coins.walletAddress})` })
     .from(coins)
     .where(and(isNull(coins.deletedAt), ne(coins.walletAddress, INCINERATOR_ADDRESS)))

@@ -1,5 +1,5 @@
 import { type CoinItem, CoinResp, type CoinsResp, Mode, SearchReqSchema, SortBy } from '@memedime/contracts'
-import { db } from '../db'
+import { getDb } from '../db'
 import { Coin, coins } from './db.ts'
 import { sql } from 'drizzle-orm'
 import { z } from 'zod'
@@ -60,7 +60,7 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
     `
 
     // Execute count query
-    const countResult = await db.all<{ count: number }>(countQuery)
+    const countResult = await getDb().all<{ count: number }>(countQuery)
     const count = Number(countResult[0]?.count) || 0
 
     if (!count) {
@@ -96,7 +96,7 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
     `
 
     // Execute search query
-    const results = await db.all<FtsCoin>(searchQuery)
+    const results = await getDb().all<FtsCoin>(searchQuery)
 
     const response = toResponse(params, results, count)
 
@@ -136,10 +136,10 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
 
   // Get count and results
   const countQuery = sql`SELECT count(*) as count FROM coins WHERE deleted_at IS NULL ${mode ? sql`AND mode = ${mode}` : sql``}`
-  const countResult = await db.all<{ count: number }>(countQuery)
+  const countResult = await getDb().all<{ count: number }>(countQuery)
   const count = Number(countResult[0]?.count) || 0
 
-  const results = await db.all<FtsCoin>(allCoinsQuery)
+  const results = await getDb().all<FtsCoin>(allCoinsQuery)
 
   const response = toResponse(params, results, count)
 

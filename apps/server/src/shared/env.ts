@@ -26,4 +26,7 @@ export const appEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).optional().default('development'),
 })
 
+export type AppEnv = z.infer<typeof appEnvSchema>
+
+// process.env works in both Bun (local) and Cloudflare Workers (production with nodejs_compat)
 export const appEnv = appEnvSchema.parse(process.env)
