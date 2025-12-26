@@ -18,3 +18,5 @@ out/
 **/*.db-*
 
 .claude/settings.local.json
+
+**/.wrangler

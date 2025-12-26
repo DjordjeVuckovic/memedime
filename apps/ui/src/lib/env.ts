@@ -7,6 +7,7 @@ export const appEnvSchema = z.object({
   GITHUB_REPO_URL: z.string().optional().default('https://github.com/DjordjeVuckovic/memedime'),
   X_PROFILE_URL: z.string().optional().default('https://x.com/memedime'),
   REDDIT_URL: z.string().optional().default('https://reddit.com/r/memedime'),
+  UI_HOST: z.string().optional().default('localhost:3000'),
 })
 
 export const appEnv = appEnvSchema.parse({
@@ -14,4 +15,5 @@ export const appEnv = appEnvSchema.parse({
   GITHUB_REPO_URL: metaEnv.VITE_GITHUB_REPO_URL,
   X_PROFILE_URL: metaEnv.VITE_X_PROFILE_URL,
   REDDIT_URL: metaEnv.VITE_REDDIT_URL,
+  UI_HOST: metaEnv.VITE_UI_HOST,
 })

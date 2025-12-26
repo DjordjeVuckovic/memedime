@@ -1,6 +1,7 @@
 import { createContext, useContext, type ReactNode, useEffect, useState } from 'react'
 import { useWallet as useSolanaWallet } from '@solana/wallet-adapter-react'
 import type { PublicKey } from '@solana/web3.js'
+import { appEnv } from '@/lib/env.ts'
 
 interface WalletContextValue {
   // Wallet connection state
@@ -37,14 +38,13 @@ export function WalletContextProvider({ children }: WalletContextProviderProps) 
     if (!publicKey || !signIn) return
 
     try {
-      const signature = await signIn({
-        domain: 'memedime.fun',
+      await signIn({
+        domain: appEnv.UI_HOST,
         address: publicKey.toBase58(),
         statement: 'Sign in to MemeDime',
-        uri: 'https://memedime.fun',
+        uri: `https://{${appEnv.UI_HOST}`,
       })
 
-      console.log('Signed:', signature)
     } catch (err) {
       console.error('Signing failed:', err)
       await disconnect()

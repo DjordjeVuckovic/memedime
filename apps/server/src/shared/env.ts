@@ -12,7 +12,7 @@ export const appEnvSchema = z.object({
     .transform((val) => val === 'true')
     .default(false),
   LLM_PROVIDER: LLMProviderSchema.optional().default('groq'),
-  LLM_MODEL_ID: z.string().optional().default('grok-4'),
+  LLM_MODEL_ID: z.string().optional().default('llama-3.1-8b-instant'),
   LLM_API_KEY: z.string().optional(),
   LLM_BASE_URL: z.string().optional(),
   CORS_ORIGINS: z

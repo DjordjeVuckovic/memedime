@@ -13,7 +13,7 @@ CREATE TABLE `coins` (
 	`mode` text NOT NULL,
 	`combos` text,
 	`prompt` text,
-	`wallet_address` text DEFAULT '0x0000000000000000000000000000000000000000',
+	`wallet_address` text DEFAULT '1nc1nerator11111111111111111111111111111111',
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	`deleted_at` integer
