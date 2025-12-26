@@ -42,7 +42,7 @@ export function WalletContextProvider({ children }: WalletContextProviderProps) 
         domain: appEnv.UI_HOST,
         address: publicKey.toBase58(),
         statement: 'Sign in to MemeDime',
-        uri: `https://{${appEnv.UI_HOST}`,
+        uri: `https://${appEnv.UI_HOST}`,
       })
 
     } catch (err) {

@@ -48,6 +48,7 @@ export const generateCoin = async ({ req, llmClient }: GenCoinParams): Promise<C
     ...llmCoin,
     mode: req.mode,
     combos,
+    walletAddress: req.walletAddress,
     createdAt: new Date(createdAt).toISOString(),
   })
 }
