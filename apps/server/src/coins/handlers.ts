@@ -39,7 +39,7 @@ export const generateCoin = async ({ req, llmClient }: GenCoinParams): Promise<C
       hasContext: !!req.prompt,
       tokenomics: llmCoin.tokenomics,
     },
-    'Meme coin generated successfully',
+    'meme coin generated successfully',
   )
 
   const {id, createdAt } = await createDbCoin(req.mode, llmCoin, req.prompt, combos, req.walletAddress)
@@ -81,7 +81,7 @@ const createPrompt = (req: GenCoinUnion) => {
         prompt: toLLMPrompt(social),
       }
     default:
-      throw new Error(`Invalid mode`)
+      throw new Error(`invalid mode`)
   }
 }
 

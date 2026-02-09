@@ -7,9 +7,11 @@ import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { createGroq } from '@ai-sdk/groq'
 import { MODEL_CAPABILITIES } from './capabilities'
 import { jsonParse } from '../shared/json'
+import { pipe } from '../shared/types'
 import { withEnforcedSchema } from './prompts'
 import { memeCoinResponseExample } from './examples'
 import { logger } from '../shared/logger'
+import { GenerationError } from '../shared/errors'
 
 export interface LLMClient {
   genCoin(prompt: Prompt): Promise<LLMCoinResp>
@@ -42,7 +44,7 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
             'LLM generation completed with schema',
           )
 
-          return LLMCoinRespSchema.parse(object)
+          return pipe(object, (o) => LLMCoinRespSchema.parse(o), validateCoinOutput)
         }
 
         const finalPrompt = withEnforcedSchema<typeof LLMCoinRespSchema>(
@@ -69,7 +71,7 @@ export const createLLMClient = (options: LLMOptions): LLMClient => {
           'LLM generation completed without schema',
         )
 
-        return LLMCoinRespSchema.parse(jsonParse(text))
+        return pipe(text, jsonParse, (o) => LLMCoinRespSchema.parse(o), validateCoinOutput)
       } catch (error) {
         logger.error(
           {
@@ -173,4 +175,21 @@ const buildOpenRouterModel = (options: LLMOptions) => {
   return {
     model,
   }
+}
+
+const BLOCKED_OUTPUT = [/0x[a-fA-F0-9]{40}/, /[1-9A-HJ-NP-Za-km-z]{32,44}/, /https?:\/\//i, /http?:\/\//i]
+
+const validateCoinOutput = (coin: LLMCoinResp): LLMCoinResp => {
+  const allText = [coin.name, coin.ticker, coin.tagline, coin.description, coin.marketing]
+    .filter(Boolean)
+    .join(' ')
+
+  for (const pattern of BLOCKED_OUTPUT) {
+    if (pattern.test(allText)) {
+      logger.warn({ coinName: coin.name, ticker: coin.ticker }, 'Output contains blocked content (address/URL)')
+      throw new GenerationError('Generated coin contains blocked content')
+    }
+  }
+
+  return coin
 }

@@ -72,31 +72,31 @@ export const COIN_VIBES: Record<CoinVibe, VibeInfo> = {
     id: 'hypebeast',
     label: 'wen binance',
     description: 'roadmaps to nowhere. hype IS the product',
-    shipped: false,
+    shipped: true,
   },
   'gambler': {
     id: 'gambler',
     label: 'pure casino',
     description: 'no pretense. just vibes and variance',
-    shipped: false,
+    shipped: true,
   },
   'meta': {
     id: 'meta',
     label: 'honest rug',
     description: "can't scam if you say you're a scam",
-    shipped: false,
+    shipped: true,
   },
   'ai-agent': {
     id: 'ai-agent',
     label: 'AI agent cope',
     description: 'python script = autonomous agent apparently',
-    shipped: false,
+    shipped: true,
   },
   'normie': {
     id: 'normie',
     label: 'explain to dad',
     description: "zero jargon. your friend told you at dinner",
-    shipped: false,
+    shipped: true,
   },
 }
 

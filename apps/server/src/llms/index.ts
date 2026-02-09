@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver } from 'hono-openapi'
 import { VibeInfoSchema } from './schemas'
-import { getVibes } from './handlers'
+import { getShippedVibes } from '@memedime/contracts'
 
 const llmRouter = new Hono()
 
@@ -24,7 +24,7 @@ llmRouter
       }
     }),
     async (c) => {
-      return c.json(getVibes(), 200)
+      return c.json(getShippedVibes(), 200)
     }
   )
 

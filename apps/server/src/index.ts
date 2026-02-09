@@ -5,11 +5,11 @@ import memeRouter from './coins'
 import statsRouter from './stats'
 import { openAPIRouteHandler } from 'hono-openapi'
 import { appEnv } from './shared/env'
-import { createMarkdownFromOpenApi } from '@scalar/openapi-to-markdown'
 import { logger } from './shared/logger'
 import { requestLogger } from './middleware/logging'
 import './types/hono'
 import { HTTPException } from 'hono/http-exception'
+import { ZodError } from 'zod'
 
 const app = new Hono({
   strict: false,
@@ -69,11 +69,11 @@ app
       },
       'Unhandled error in request handler',
     )
-    if(err instanceof HTTPException) {
-      return c.json(
-        { error: err.message },
-        err.status,
-      )
+    if (err instanceof HTTPException) {
+      return c.json({ error: err.message }, err.status)
+    }
+    if (err instanceof ZodError) {
+      return c.json({ errr: err.message }, 422)
     }
     return c.text('Internal Server Error', 500)
   })
