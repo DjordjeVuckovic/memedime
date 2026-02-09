@@ -1,6 +1,6 @@
 import { type CoinItem, CoinResp, type CoinsResp, Mode, SearchReqSchema, SortBy } from '@memedime/contracts'
 import { getDb } from '../db'
-import { Coin, coins } from './db.ts'
+import { Coin } from './db.ts'
 import { sql } from 'drizzle-orm'
 import { z } from 'zod'
 import { decodeCursor, encodeCursor } from '../shared/pagination.ts'
@@ -95,7 +95,6 @@ export const ftsSearchCoins = async (params: SearchParams): Promise<CoinsResp> =
       LIMIT ${limit + 1}
     `
 
-    // Execute search query
     const results = await getDb().all<FtsCoin>(searchQuery)
 
     const response = toResponse(params, results, count)

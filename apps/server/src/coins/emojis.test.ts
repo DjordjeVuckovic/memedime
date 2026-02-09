@@ -1,7 +1,6 @@
 import { describe, expect, test, mock } from 'bun:test'
 import { spinEmojis, type Emoji } from './emojis'
 
-// Helper to create mock emojis for testing
 const createMockEmoji = (emoji: string, name: string, weight: number = 1): Emoji => ({
   emoji,
   name,
@@ -21,7 +20,6 @@ describe('spinEmojis', () => {
   test('returns valid emoji objects', () => {
     const result = spinEmojis()
 
-    // Each should have emoji, name, weight properties
     expect(result.animal.emoji).toBeDefined()
     expect(result.animal.name).toBeDefined()
     expect(result.animal.weight).toBeDefined()
@@ -79,7 +77,6 @@ describe('spinEmojis', () => {
   test('emojis are actual emoji characters', () => {
     const result = spinEmojis()
 
-    // Emoji characters typically have length > 1 or special unicode
     expect(result.animal.emoji.length).toBeGreaterThan(0)
     expect(result.food.emoji.length).toBeGreaterThan(0)
     expect(result.vibe.emoji.length).toBeGreaterThan(0)

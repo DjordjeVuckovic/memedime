@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-
-export type CoinVibe = 'degen' | 'diamond-hands' | 'wholesome' | 'shitpost' | 'moon-mission' | 'normie' | ''
+import { type CoinVibe, COIN_VIBES } from '@memedime/contracts'
 
 interface CustomizationOptionsProps {
   vibe: CoinVibe
@@ -11,15 +10,10 @@ interface CustomizationOptionsProps {
   focusBorderClass: string
 }
 
-const vibeOptions = [
-  { value: '', label: 'None (Surprise me!)' },
-  { value: 'degen', label: 'Degen Energy - Aggressive & risky' },
-  { value: 'diamond-hands', label: 'Diamond Hands - Long-term HODLer' },
-  { value: 'wholesome', label: 'Wholesome - Family-friendly vibes' },
-  { value: 'shitpost', label: 'Shitpost Mode - Maximum chaos' },
-  { value: 'moon-mission', label: 'Moon Mission - Extreme hype' },
-  { value: 'normie', label: 'Normie-Friendly - Accessible to all' },
-]
+const vibeOptions = Object.values(COIN_VIBES).map((v) => ({
+  value: v.id,
+  label: v.id === '' ? 'Surprise me!' : `${v.id} - ${v.label}`,
+}))
 
 export function CustomizationOptions({
   vibe,
@@ -44,7 +38,7 @@ export function CustomizationOptions({
         {/* Vibe Dropdown */}
         <div>
           <label className="block text-sm font-bold text-white/70 mb-2 uppercase tracking-wide">
-            Persona:
+            Vibe:
           </label>
           <select
             value={vibe}

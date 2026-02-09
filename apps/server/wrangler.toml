@@ -1,0 +1,17 @@
+name = "memedime-server"
+main = "src/index.ts"
+compatibility_date = "2025-12-26"
+compatibility_flags = ["nodejs_compat", "nodejs_compat_populate_process_env"]
+
+[vars]
+NODE_ENV = "production"
+PORT = "8787"
+LOG_LEVEL = "info"
+
+[env.test]
+name = "memedime-server-test"
+vars = { NODE_ENV = "test", LOG_LEVEL = "info", PORT = "8788" }
+
+[env.production]
+name = "memedime-server-prod"
+vars = { NODE_ENV = "production", LOG_LEVEL = "info", PORT = "8787" }

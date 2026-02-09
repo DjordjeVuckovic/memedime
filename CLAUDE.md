@@ -26,7 +26,7 @@ memedime/
 
 ### apps/api - Backend API
 
-- **Framework**: Elysia (Bun-native web framework)
+- **Framework**: Hono (Bun-native web framework)
 - **Port**: 3000
 - **Entry**: `apps/api/src/index.ts`
 - **Dev command**: `bun --filter api dev` or `bun run --watch src/index.ts`
@@ -44,7 +44,6 @@ memedime/
 - **Router**: TanStack Router with file-based routing (`src/routes/`)
 - **Code splitting**: Auto-enabled via TanStack Router plugin
 - **Dev tools**: TanStack Router DevTools and React DevTools included
-- **Testing**: Vitest + Testing Library + jsdom
 
 ## Common Development Commands
 
@@ -80,12 +79,6 @@ bun run dev     # Run with --watch flag
 
 The app generates meme coin ideas based on a **3-reel slot machine**:
 
-1. **Reel 1 - Animals**: Various animal emojis (🦫 🐕 🐸 🦄 🐱 🦍 etc.)
-2. **Reel 2 - Foods**: Various food emojis (🍕 🍔 🌮 🍜 🍰 🌭 etc.)
-3. **Reel 3 - Vibes**: Various vibe emojis (💎 🌙 🚀 💀 ⚡ 🔥 etc.)
-
-**Important**: The emoji lists are configurable and may expand over time. Do not hard-code specific emoji arrays - design for easy addition/modification of emoji options.
-
 ### User Flow (Core Experience)
 
 1. User connects Solana wallet
@@ -101,15 +94,6 @@ The app generates meme coin ideas based on a **3-reel slot machine**:
    - Tokenomics
    - Marketing angle
 8. User can: Tweet, Launch on pump.fun, Download assets, or Spin again
-
-### Optional Context Feature
-
-**Critical**: The context input is OPTIONAL but powerful:
-- Allows users to personalize results (e.g., "super aggressive marketing", "wholesome and family friendly")
-- Persists between spins (sticky input)
-- 100 character limit
-- When provided, AI incorporates theme into concept
-- Same emoji combo + different context = different coins (increases replayability)
 
 ## Payment Flow (x402 Protocol)
 
@@ -159,11 +143,10 @@ The app generates meme coin ideas based on a **3-reel slot machine**:
 
 ## Design Principles
 
-1. **Fun first** - Entertainment, not serious finance
-2. **Casino aesthetic** - Vegas vibes, gold accents, dramatic animations
-3. **Web3 native** - Purple gradients, glassmorphism
-4. **Clear CTAs** - Big buttons, obvious next steps
-5. **Instant feedback** - Every action has visual response
+1. **Casino aesthetic** - Vegas vibes, gold accents, dramatic animations
+2. **Web3 native** - Purple gradients, glassmorphism
+3. **Clear CTAs** - Big buttons, obvious next steps
+4. **Instant feedback** - Every action has visual response
 
 ### Typography & Style:
 - **Funny, crypto-oriented** - Playful but with meme culture authenticity
@@ -172,105 +155,14 @@ The app generates meme coin ideas based on a **3-reel slot machine**:
 - Consider mixing monospace for data/numbers with sans-serif for body text
 - Embrace crypto/meme culture typography trends (bold headers, tight spacing)
 
-### Animation Guidelines:
-- Reel spin: 2-3 seconds with blur effect
-- Lever pull: Physical "clunk" feedback
-- Result reveal: Fade in with slight scale up
-- Context hint: Subtle pulse when empty (shows it's optional)
-
-## TypeScript Configuration
-
-The repo uses **strict TypeScript** settings:
-- `strict: true`
-- `noFallthroughCasesInSwitch: true`
-- `noUncheckedIndexedAccess: true`
-- Module resolution: `bundler` (for Bun/Vite)
-
 ## Testing
 
 Frontend tests use:
 - **Vitest** for test runner
-- **Testing Library** (@testing-library/react + @testing-library/dom)
-- **jsdom** for DOM environment
+Backend tests use:
+- **Bun testing**
 
-Run tests: `cd apps/ui && bun run test`
-
-## Integration Points
-
-### Pump.fun Launch
-When user clicks "Launch on Pump.fun":
-1. Show preparation modal with warnings
-2. Pre-fill pump.fun URL with coin data
-3. Open in new tab: `https://pump.fun/create?name=...&symbol=...&description=...&image=...&ref=memedime`
-
-### Twitter Sharing
-Pre-fill tweet format:
-```
-Just generated $[TICKER] on @memedime.fun! 🎰
-
-[If context used: "Theme: [context]"]
-
-"[First line of concept]"
-
-Should I launch it? 👀
-
-Try it: https://memedime.fun
-```
-
-## Edge Cases to Handle
-
-- **No wallet detected**: Show wallet connection prompt (support multiple Solana wallet providers)
-- **Insufficient balance**: Warning before spin with "Add Funds" button
-- **Context too long**: Disable pull lever, show character counter in red
-- **Inappropriate context**: Proceed with combo only, warn user
-- **Payment rejected**: Allow retry with no charge
-- **AI generation failed**: Auto-retry once, then show error + refund option
-- **Slow network**: Extend loading with "Still working..." message, 30s timeout
-
-## Key Files to Know
-
-### Frontend:
-- `apps/ui/src/routes/index.tsx` - Landing page / main slot interface
-- `apps/ui/src/routes/__root.tsx` - Root layout
-- `apps/ui/src/main.tsx` - App entry point
-- `apps/ui/vite.config.ts` - Vite configuration with TanStack Router plugin
-
-### Backend:
-- `apps/api/src/index.ts` - Elysia server entry point (currently minimal)
-
-### Documentation:
-- `docs/REQUREMENTS.md` - **Complete MVP specification** (read this for full details on UI/UX, user flows, and business logic)
-
-## Future Implementation Notes
-
-The codebase is currently scaffolded. When implementing:
-
-1. **API endpoints needed**:
-   - `POST /spin` - Validate payment + generate coin idea
-   - `GET /stats` - Return global stats (total spins, coins launched)
-
-2. **Frontend components to build**:
-   - SlotMachine (3 reels with spin animation)
-   - PaymentModal (Solana wallet integration)
-   - ResultCard (displays generated coin)
-   - ContextInput (optional user hint, sticky, 100 char limit)
-   - WalletConnect (support multiple Solana wallet providers)
-
-3. **Wallet integration**:
-   - Support standard Solana wallet adapters
-   - Handle USDC transactions on Solana
-   - Implement x402 micropayment protocol
-
-4. **Emoji configuration**:
-   - Store emoji lists in a configurable format (JSON/config file)
-   - Make it easy to add/remove emojis without code changes
-   - Each emoji should have: emoji character, name, and optional description
-
-5. **State management**: Consider TanStack Query for API calls and caching
-
-6. **Animation library**: Consider Framer Motion for slot machine animations
-
-7. **Form validation**: Implement character limit + sanitization for context input
+Run tests: `bun run test`
 
 ## Important Context from Requirements
 

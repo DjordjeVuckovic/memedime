@@ -1,31 +1,31 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver } from 'hono-openapi'
-import { PersonaSchema } from './schemas'
-import { getPersonas } from './handlers'
+import { VibeInfoSchema } from './schemas'
+import { getVibes } from './handlers'
 
 const llmRouter = new Hono()
 
 llmRouter
-  .post(
-    "/llm/personas",
+  .get(
+    "/llm/vibes",
     describeRoute({
       tags: ["LLM"],
-      operationId: "getPersonas",
-      description: "Get available LLM personas.",
+      operationId: "getVibes",
+      description: "Get available coin vibes.",
       responses: {
         200: {
-          description: "Successful response with available LLM personas.",
+          description: "Available coin vibes for generation.",
           content: {
             "application/json": {
-              schema: resolver(PersonaSchema)
+              schema: resolver(VibeInfoSchema)
             }
           }
         }
       }
     }),
     async (c) => {
-      return c.json(getPersonas(), 200)
+      return c.json(getVibes(), 200)
     }
-  );
+  )
 
-export default llmRouter;
+export default llmRouter

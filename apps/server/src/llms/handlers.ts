@@ -1,16 +1,9 @@
-export const getPersonas = () => {
-  return [
-    {
-      name: "Friendly Assistant",
-      description: "A helpful and friendly assistant who provides clear and concise answers.",
-    },
-    {
-      name: "Technical Expert",
-      description: "An expert in technical subjects who provides detailed and accurate information.",
-    },
-    {
-      name: "Creative Writer",
-      description: "A creative writer who can generate engaging stories and content.",
-    },
-  ];
+import { CoinVibe, VibeInfo, getShippedVibes, getVibeInfo } from '@memedime/contracts'
+
+export const getVibes = (): VibeInfo[] => {
+  return getShippedVibes()
+}
+
+export const getVibe = (id: CoinVibe): VibeInfo => {
+  return getVibeInfo(id)
 }

@@ -1,5 +1,8 @@
 import { z } from 'zod'
 import { percentageField } from '@memedime/contracts'
+
+export { VibeInfoSchema } from '@memedime/contracts'
+
 export const LLMProviderSchema = z.enum([
   'xai',
   'openai',
@@ -44,11 +47,3 @@ export const LLMCoinRespSchema = z
   })
 
 export type LLMCoinResp = z.infer<typeof LLMCoinRespSchema>
-
-export const PersonaSchema = z
-  .object({
-    name: z.string(),
-    description: z.string().optional(),
-  })
-  .meta({ description: 'Schema for LLM persona' })
-

@@ -33,20 +33,20 @@ export const GenCoinReqSchema = z.object({
 
 export const RandomCoinReqSchema = GenCoinReqSchema.extend({
   mode: z.literal('random'),
-})
+}).strict()
 export type RandomCoinReq = z.infer<typeof RandomCoinReqSchema>
 
 export const SocialCoinReqSchema = GenCoinReqSchema.extend({
   mode: z.literal('social'),
   postUrl: z.string().optional(),
   postContent: z.string().optional(),
-})
+}).strict()
 export type SocialCoinReq = z.infer<typeof SocialCoinReqSchema>
 
 export const PromptCoinReqSchema = GenCoinReqSchema.extend({
   mode: z.literal('prompt'),
   prompt: z.string(),
-})
+}).strict()
 export type PromptCoinReq = z.infer<typeof PromptCoinReqSchema>
 
 export const GenCoinReqUnionSchema = z.union([RandomCoinReqSchema, SocialCoinReqSchema, PromptCoinReqSchema])

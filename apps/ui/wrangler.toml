@@ -1,0 +1,4 @@
+
+name = "memedime"
+compatibility_date = "2025-12-26"
+pages_build_output_dir = "dist"
