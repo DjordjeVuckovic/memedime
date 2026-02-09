@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach } from 'bun:test'
 import { withRetry, DEFAULT_RETRIES, DEFAULT_EXPONENT } from './resilience'
-import { AggregateError } from './errors'
+import { AggError } from './errors'
 
 describe('withRetry', () => {
   let callCount: number
@@ -54,8 +54,8 @@ describe('withRetry', () => {
       })
       throw new Error('Should have thrown')
     } catch (err) {
-      expect(err).toBeInstanceOf(AggregateError)
-      expect((err as AggregateError).errors).toHaveLength(3)
+      expect(err).toBeInstanceOf(AggError)
+      expect((err as AggError).errors).toHaveLength(3)
       expect(callCount).toBe(3)
     }
   })
@@ -205,8 +205,8 @@ describe('withRetry', () => {
         jitter: false,
       })
     } catch (err) {
-      expect(err).toBeInstanceOf(AggregateError)
-      const aggErr = err as AggregateError
+      expect(err).toBeInstanceOf(AggError)
+      const aggErr = err as AggError
 
       expect(aggErr.errors).toHaveLength(3)
       expect((aggErr.errors[0] as Error).message).toBe('Error 1')
@@ -224,8 +224,8 @@ describe('withRetry', () => {
     try {
       await withRetry(throwString, { retires: 2, delayMs: 10 })
     } catch (err) {
-      expect(err).toBeInstanceOf(AggregateError)
-      const aggErr = err as AggregateError
+      expect(err).toBeInstanceOf(AggError)
+      const aggErr = err as AggError
       expect(aggErr.errors).toHaveLength(2)
       expect(aggErr.errors[0]).toBe('string error')
     }

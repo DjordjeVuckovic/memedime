@@ -1,9 +1,9 @@
 import { createLLMClient } from '../llms/client'
 import { generateCoin, getCoinById, searchCoins } from './handlers'
 import { appEnv } from '../shared/env'
-import { GenerationError } from '../shared/errors'
+import { AggError, GenerationError } from '../shared/errors'
 import { Hono } from 'hono'
-import { validator as zValidator, resolver, describeRoute } from 'hono-openapi'
+import { describeRoute, resolver, validator as zValidator } from 'hono-openapi'
 import { z, ZodError } from 'zod'
 import {
   CoinRespSchema,
@@ -54,8 +54,8 @@ memeRouter.post(
       c.header('Location', `${BASE_PATH}/${coin.id}`)
       return c.json(coin, 201)
     } catch (err) {
-      if (err instanceof GenerationError || err instanceof ZodError) {
-        return c.json({ error: "ai generated slop. try again!" }, 422)
+      if (err instanceof GenerationError || err instanceof ZodError || err instanceof AggError) {
+        return c.json({ error: 'ai generated slop. try again!' }, 422)
       }
       throw err
     }
@@ -81,7 +81,7 @@ memeRouter.get(
       },
     },
   }),
-  zValidator('param', z.object({ id: z.coerce.number()})),
+  zValidator('param', z.object({ id: z.coerce.number() })),
   async (c) => {
     const { id } = c.req.valid('param')
 

@@ -34,7 +34,7 @@ const request = async <T>(endpoint: string, options?: RequestInit): Promise<T> =
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
-    throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+    throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`)
   }
 
   return response.json()

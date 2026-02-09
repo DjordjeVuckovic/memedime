@@ -1,4 +1,4 @@
-import { AggregateError } from './errors'
+import { AggError } from './errors'
 import { logger } from './logger'
 
 type RetryOptions = {
@@ -51,5 +51,5 @@ export const withRetry = async <T>(
     }
   }
 
-  throw new AggregateError(errors, `All ${retires} attempts failed`);
+  throw new AggError(errors, `All ${retires} attempts failed`);
 }

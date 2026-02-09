@@ -1,4 +1,4 @@
-export class AggregateError extends Error {
+export class AggError extends Error {
   errors: unknown[];
   constructor(errors: unknown[], message?: string) {
     super(message);
