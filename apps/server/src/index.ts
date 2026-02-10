@@ -1,15 +1,21 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { Scalar } from '@scalar/hono-api-reference'
-import memeRouter from './coins'
-import statsRouter from './stats'
+import memeRouter from './routes/coins.ts'
+import statsRouter from './routes/stats.ts'
 import { openAPIRouteHandler } from 'hono-openapi'
-import { appEnv } from './shared/env'
-import { logger } from './shared/logger'
+import { appEnv, getDatabaseConfig, getLLMConfig, getLoggerConfig } from './env.ts'
+import { initDb, createLogger, createLLMClient, getStatusCode, getErrorResponse, isDomainError } from '@memedime/core'
 import { requestLogger } from './middleware/logging'
 import './types/hono'
 import { HTTPException } from 'hono/http-exception'
 import { ZodError } from 'zod'
+
+const logger = createLogger(getLoggerConfig())
+
+initDb(getDatabaseConfig())
+
+export const llmClient = createLLMClient(getLLMConfig())
 
 const app = new Hono({
   strict: false,
@@ -60,6 +66,54 @@ app
   })
   .onError((err, c) => {
     const reqLogger = c.get('logger') || logger
+
+    if (err instanceof HTTPException) {
+      reqLogger.warn(
+        {
+          err,
+          path: c.req.path,
+          method: c.req.method,
+          requestId: c.get('requestId'),
+        },
+        'HTTP error in request handler',
+      )
+      return c.json({ error: err.message }, err.status)
+    }
+
+    if (err instanceof ZodError) {
+      reqLogger.warn(
+        {
+          err,
+          path: c.req.path,
+          method: c.req.method,
+          requestId: c.get('requestId'),
+        },
+        'Validation error in request handler',
+      )
+      return c.json({ error: err.message }, 422)
+    }
+
+    if (isDomainError(err)) {
+      const statusCode = err.statusCode as 400 | 401 | 402 | 403 | 404 | 409 | 422 | 500 | 502
+      const errorResponse = getErrorResponse(err)
+
+      const logLevel = statusCode >= 500 ? 'error' : 'warn'
+
+      reqLogger[logLevel](
+        {
+          err,
+          path: c.req.path,
+          method: c.req.method,
+          requestId: c.get('requestId'),
+          code: err.code,
+          details: err.details,
+        },
+        `Domain error: ${err.name}`,
+      )
+
+      return c.json(errorResponse, statusCode)
+    }
+
     reqLogger.error(
       {
         err,
@@ -69,13 +123,8 @@ app
       },
       'Unhandled error in request handler',
     )
-    if (err instanceof HTTPException) {
-      return c.json({ error: err.message }, err.status)
-    }
-    if (err instanceof ZodError) {
-      return c.json({ errr: err.message }, 422)
-    }
-    return c.text('Internal Server Error', 500)
+
+    return c.json({ error: 'Internal Server Error' }, 500)
   })
 
 export default {

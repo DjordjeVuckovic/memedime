@@ -1,8 +1,8 @@
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import type { LibSQLDatabase } from "drizzle-orm/libsql";
-import { logger } from './logger'
-import { ConfigurationError } from './errors'
+import { logger } from '../shared/logger'
+import { ConfigurationError } from '../shared/errors'
 
 export type DatabaseConfig = {
   url: string

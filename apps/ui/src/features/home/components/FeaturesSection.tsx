@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/features/shared/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Bolt, Brain, Shield, Trophy } from 'lucide-react'
 
 export function FeaturesSection() {

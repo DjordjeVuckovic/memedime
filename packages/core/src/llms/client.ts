@@ -7,12 +7,12 @@ import { createOllama } from 'ollama-ai-provider-v2'
 import { createOpenRouter } from '@openrouter/ai-sdk-provider'
 import { createGroq } from '@ai-sdk/groq'
 import { MODEL_CAPABILITIES } from './capabilities'
-import { jsonParse } from './json'
-import { pipe } from './types'
+import { jsonParse } from '../shared/json'
+import { pipe } from '../shared/types'
 import { withEnforcedSchema } from './prompts'
 import { memeCoinResponseExample } from './examples'
-import { logger } from './logger'
-import { GenerationError } from './errors'
+import { logger } from '../shared/logger'
+import { GenerationError } from '../shared/errors'
 
 export interface LLMClient {
   genCoin(prompt: Prompt): Promise<LLMCoinResp>

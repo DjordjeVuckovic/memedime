@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/features/shared/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 
 const steps = [
   { id: '01', title: 'CONNECT', color: 'yellow', description: 'Link your wallet. Solflare, whatever.' },

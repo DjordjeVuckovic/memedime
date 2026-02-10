@@ -1,7 +1,4 @@
-import { createLLMClient } from '../llms/client'
-import { generateCoin, getCoinById, searchCoins } from './handlers'
-import { appEnv } from '../shared/env'
-import { AggError, GenerationError } from '../shared/errors'
+import { generateCoin, getCoinById, searchCoins, AggError, GenerationError } from '@memedime/core'
 import { Hono } from 'hono'
 import { describeRoute, resolver, validator as zValidator } from 'hono-openapi'
 import { z, ZodError } from 'zod'
@@ -13,13 +10,8 @@ import {
   SearchReqSchema,
   SortBySchema,
 } from '@memedime/contracts'
-
-const llmClient = createLLMClient({
-  provider: appEnv.LLM_PROVIDER,
-  modelId: appEnv.LLM_MODEL_ID,
-  baseURL: appEnv.LLM_BASE_URL,
-  apiKey: appEnv.LLM_API_KEY,
-})
+import type { LLMClient } from '@memedime/core'
+import { llmClient } from '../index.ts'
 
 const BASE_PATH = '/v1/coins'
 const memeRouter = new Hono()

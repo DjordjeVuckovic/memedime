@@ -36,12 +36,12 @@ export function CoinConfetti({ active = true, duration = 4000, coinCount = 50 }:
     for (let i = 0; i < coinCount; i++) {
       generatedCoins.push({
         id: i,
-        left: Math.random() * 100, // Random horizontal position (0-100%)
-        delay: Math.random() * 500, // Stagger the start (0-500ms)
-        duration: 2000 + Math.random() * 2000, // Fall duration (2-4s)
-        rotation: Math.random() * 720 - 360, // Random rotation (-360 to 360 degrees)
+        left: Math.random() * 100,
+        delay: Math.random() * 500,
+        duration: 2000 + Math.random() * 2000,
+        rotation: Math.random() * 720 - 360,
         image: COIN_IMAGES[Math.floor(Math.random() * COIN_IMAGES.length)],
-        size: 30 + Math.random() * 40, // Random size (30-70px)
+        size: 30 + Math.random() * 40,
       })
     }
     setCoins(generatedCoins)

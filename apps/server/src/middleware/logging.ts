@@ -1,5 +1,5 @@
-import { MiddlewareHandler } from 'hono'
-import { createChildLogger } from '../shared/logger'
+import type { MiddlewareHandler } from 'hono'
+import { createChildLogger } from '@memedime/core'
 
 const ignoredPaths = new Set([
   '/health',

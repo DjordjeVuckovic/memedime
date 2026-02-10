@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { describeRoute, resolver } from 'hono-openapi'
-import { getGlobalStats } from './handlers'
+import { getGlobalStats } from '@memedime/core'
 import { GlobalStatsRespSchema } from '@memedime/contracts'
 
 const BASE_PATH = '/v1/stats'

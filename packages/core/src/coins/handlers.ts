@@ -1,15 +1,15 @@
 import type { LLMClient } from '../llms/client'
 import { toLLMPrompt } from '../llms/prompts'
-import { withRetry } from './resilience'
+import { withRetry } from '../shared/resilience'
 import { coins } from './db'
 import type { Coin, NewCoin } from './db'
-import { getDb } from './db
+import { getDb } from '../db'
 import { spinEmojis } from './emojis'
 import type { LLMCoinResp } from '../llms/schemas'
 import { eq, isNull, and } from 'drizzle-orm'
-import { omit } from './types'
-import { logger } from './logger'
-import { ValidationError } from './errors'
+import { omit } from '../shared/types'
+import { logger } from '../shared/logger'
+import { ValidationError } from '../shared/errors'
 import {
   type CoinCombos,
   type Mode,

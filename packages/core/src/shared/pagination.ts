@@ -1,4 +1,4 @@
-import { HTTPException } from 'hono/http-exception'
+import { InvalidCursorError } from "./errors.ts"
 
 export const DEFAULT_LIMIT = 50;
 
@@ -15,7 +15,7 @@ export const decodeCursor = (cursor: string) => {
     // No colon, just ID
     const id = decoded
     if(!id) {
-      throw new HTTPException(400, { message: 'Invalid cursor'})
+      throw new InvalidCursorError(cursor)
     }
     return { id, date: undefined }
   }
@@ -25,8 +25,7 @@ export const decodeCursor = (cursor: string) => {
   const date = decoded.slice(colonIndex + 1)
 
   if(!id) {
-    throw new HTTPException(400, { message: 'Invalid cursor'})
+    throw new InvalidCursorError(cursor)
   }
   return { id, date }
 }
-

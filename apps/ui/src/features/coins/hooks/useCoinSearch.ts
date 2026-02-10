@@ -20,10 +20,12 @@ export function useCoinSearch({
   const [localSearchQuery, setLocalSearchQuery] = useState(initialQuery)
   const debouncedSearchQuery = useDebounce(localSearchQuery, 300)
 
+  // Sync local state with URL params on initial load
   useEffect(() => {
     setLocalSearchQuery(initialQuery)
   }, [initialQuery])
 
+  // Update URL when debounced value changes (prevents excessive navigation)
   useEffect(() => {
     if (debouncedSearchQuery !== initialQuery) {
       navigate({
@@ -45,12 +47,14 @@ export function useCoinSearch({
     isFetchingNextPage,
   } = useSearchCoins(initialQuery, initialMode ?? undefined, initialSortBy)
 
+  // Flatten pages into single array
   const coins = useMemo(() => {
     return data?.pages?.flatMap((page) => page.items) ?? []
   }, [data?.pages])
 
   const isDebouncing = localSearchQuery !== debouncedSearchQuery
 
+  // Update multiple search params at once
   const updateSearch = useCallback(
     (updates: { q?: string; mode?: Mode | null; sortBy?: 'recent' | 'relevance' }) => {
       navigate({

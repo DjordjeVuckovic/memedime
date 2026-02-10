@@ -1,4 +1,4 @@
-import { LLMProviderSchema } from '../llms/schemas'
+import { LLMProviderSchema, type DatabaseConfig, type LLMOptions, type LoggerConfig } from '@memedime/core'
 import { z } from 'zod'
 
 export const appEnvSchema = z.object({
@@ -30,3 +30,26 @@ export type AppEnv = z.infer<typeof appEnvSchema>
 
 // process.env works in both Bun (local) and Cloudflare Workers (production with nodejs_compat)
 export const appEnv = appEnvSchema.parse(process.env)
+
+/**
+ * Convert AppEnv to core config types
+ * These helper functions make the contract between server env and core explicit
+ */
+export const getDatabaseConfig = (env: AppEnv = appEnv): DatabaseConfig => ({
+  url: env.DB_URL,
+  authToken: env.DB_AUTH_TOKEN,
+})
+
+export const getLLMConfig = (env: AppEnv = appEnv): LLMOptions => ({
+  provider: env.LLM_PROVIDER,
+  modelId: env.LLM_MODEL_ID,
+  apiKey: env.LLM_API_KEY,
+  baseURL: env.LLM_BASE_URL,
+})
+
+export const getLoggerConfig = (env: AppEnv = appEnv): LoggerConfig => ({
+  logLevel: env.LOG_LEVEL,
+  nodeEnv: env.NODE_ENV,
+  serviceName: 'memedime-server',
+  serviceVersion: '1.0.0',
+})

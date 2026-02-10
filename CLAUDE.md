@@ -28,8 +28,8 @@ memedime/
 
 - **Framework**: Hono (Bun-native web framework)
 - **Port**: 3000
-- **Entry**: `apps/api/src/index.ts`
-- **Dev command**: `bun --filter api dev` or `bun run --watch src/index.ts`
+- **Entry**: `apps/api/src/stats.ts`
+- **Dev command**: `bun --filter api dev` or `bun run --watch src/stats.ts`
 
 ### apps/ui - Frontend Application
 

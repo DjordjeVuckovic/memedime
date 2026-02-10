@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/features/shared/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { TrendingUp, Rocket } from 'lucide-react'
 import { useGlobalStats } from '@/routes/stats/-queries.ts'
 

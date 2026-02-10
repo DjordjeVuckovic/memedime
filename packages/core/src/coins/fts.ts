@@ -1,10 +1,10 @@
 import { type CoinItem, type CoinResp, type CoinsResp, type Mode, SearchReqSchema, type SortBy } from '@memedime/contracts'
-import { getDb } from './db
+import { getDb } from '../db'
 import type { Coin } from './db'
 import { sql } from 'drizzle-orm'
 import { z } from 'zod'
-import { decodeCursor, encodeCursor } from './pagination'
-import { logger } from './logger'
+import { decodeCursor, encodeCursor } from '../shared/pagination'
+import { logger } from '../shared/logger'
 
 export const buildFtsMatch = (query: string): string => {
   const term = query.trim().toLowerCase()

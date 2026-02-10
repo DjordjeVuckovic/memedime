@@ -12,6 +12,7 @@ import * as api from '@/api/api-client.ts'
 import type { Mode, SortBy } from '@memedime/contracts'
 import { useWalletContext } from '@/features/wallet/components/WalletContext'
 
+// Query Keys - structured for cache management
 const coinKeys = {
   all: ['coins'] as const,
   lists: () => [...coinKeys.all, 'list'] as const,
@@ -20,6 +21,7 @@ const coinKeys = {
   detail: (id: number) => [...coinKeys.details(), id] as const,
 }
 
+// Single coin query with placeholder data for smooth loading
 export const useCoin = (id: number, options?: Omit<UseQueryOptions<api.CoinResp>, 'queryKey' | 'queryFn'>) => {
   return useQuery({
     queryKey: coinKeys.detail(id),
@@ -29,6 +31,8 @@ export const useCoin = (id: number, options?: Omit<UseQueryOptions<api.CoinResp>
   })
 }
 
+// Infinite scroll search with cursor-based pagination
+// Keeps previous data visible while loading next page
 export const useSearchCoins = (
   query: string,
   mode?: Mode,
@@ -57,6 +61,7 @@ export const useSearchCoins = (
   })
 }
 
+// Generate coin mutation - invalidates cache and sets new data optimistically
 export const useGenerateCoin = (
   options?: Omit<
     UseMutationOptions<api.CoinResp, Error, api.RandomCoinReq | api.PromptCoinReq | api.SocialCoinReq>,
@@ -72,7 +77,9 @@ export const useGenerateCoin = (
       walletAddress: wallet.address || undefined,
     }),
     onSuccess: (data) => {
+      // Invalidate and refetch coins list
       queryClient.invalidateQueries({ queryKey: coinKeys.lists() }).then()
+      // Set the coin detail in cache
       queryClient.setQueryData(coinKeys.detail(data.id), data)
     },
     ...options,

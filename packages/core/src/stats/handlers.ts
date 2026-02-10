@@ -3,7 +3,7 @@ import { coins } from '../coins/db'
 import { sql, and, isNull, gte, ne, count } from 'drizzle-orm'
 import type { GlobalStatsResp } from '@memedime/contracts'
 
-const INCINERATOR_ADDRESS = '1nc1nerator11111111111111111111111111111111'
+const BURN_ADDRESS = '1nc1nerator11111111111111111111111111111111'
 
 export const getGlobalStats = async (): Promise<GlobalStatsResp> => {
   const now = new Date()
@@ -38,7 +38,7 @@ export const getGlobalStats = async (): Promise<GlobalStatsResp> => {
   const uniqueWalletsResult = await getDb()
     .select({ count: sql<number>`COUNT(DISTINCT ${coins.walletAddress})` })
     .from(coins)
-    .where(and(isNull(coins.deletedAt), ne(coins.walletAddress, INCINERATOR_ADDRESS)))
+    .where(and(isNull(coins.deletedAt), ne(coins.walletAddress, BURN_ADDRESS)))
 
   const uniqueWallets = uniqueWalletsResult[0]?.count ?? 0
 

@@ -1,4 +1,4 @@
-import { Card, CardContent } from '@/features/shared/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Zap } from 'lucide-react'
 import ReactIcon from '@/assets/icons/react.svg'
 import TanStackIcon from '@/assets/icons/tanstack.svg'

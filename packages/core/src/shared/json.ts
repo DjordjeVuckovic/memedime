@@ -1,5 +1,5 @@
 import { jsonrepair } from 'jsonrepair'
-import { logger } from './logger'
+import { logger } from "./logger.ts"
 
 export type JsonParseOptions = {
   skipRepair: boolean

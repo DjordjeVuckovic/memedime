@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/features/shared/components/ui/card'
-import { Button } from '@/features/shared/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
 import { useRecentCoins } from '@/routes/stats/-queries.ts'
 

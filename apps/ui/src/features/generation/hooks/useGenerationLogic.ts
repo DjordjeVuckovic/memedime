@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { useToast } from '@/features/shared/components/ui/toast'
+import { useToast } from '@/components/ui/toast'
 import { useGenerateCoin } from '@/routes/coins/-queries.ts'
 import type { Mode } from '@memedime/contracts'
 

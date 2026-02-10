@@ -1,5 +1,5 @@
 import { Outlet, createFileRoute, useLocation } from '@tanstack/react-router'
-import { GenerationModePicker, type GenerationMode } from '@/components/generate/GenerationModePicker'
+import { GenerationModePicker, type GenerationMode } from '@/features/generation/components/GenerationModePicker'
 
 export const Route = createFileRoute('/generate')({
   component: GenerateLayout,

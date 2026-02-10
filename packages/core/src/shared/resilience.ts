@@ -1,5 +1,5 @@
-import { AggError } from './errors'
-import { logger } from './logger'
+import { AggError } from "./errors.ts"
+import { logger } from "./logger.ts"
 
 type RetryOptions = {
   retires: number

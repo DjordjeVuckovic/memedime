@@ -1,4 +1,4 @@
-import { Button } from '@/features/shared/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { Sparkles, Zap } from 'lucide-react'
 import { ConnectIcon } from '@/components/ConnectIcon'
 import { RobotIcon } from '@/components/RobotIcon'
