@@ -1,4 +1,4 @@
-import { LLMCoinResp } from './schemas'
+import type { LLMCoinResp } from './schemas'
 
 export const memeCoinResponseExample: LLMCoinResp = {
   name: 'catchy meme name',

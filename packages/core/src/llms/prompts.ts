@@ -1,7 +1,7 @@
-import { Prompt } from './schemas'
+import type { Prompt } from './schemas'
 import { z } from 'zod'
-import { GenReq } from '../coins/schemas.ts'
-import { CoinVibe, getVibeInfo } from '@memedime/contracts'
+import type { GenReq } from '../coins/schemas'
+import { getVibeInfo, type CoinVibe } from '@memedime/contracts'
 
 
 const BASE_PROMPT = `you're a memecoin creator. you've launched coins, you've traded coins, you've been rugged and you've rugged. you know what makes a coin stick because you've seen it happen hundreds of times on pump.fun.
