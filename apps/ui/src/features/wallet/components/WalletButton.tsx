@@ -15,7 +15,6 @@ export function WalletButton({ connecting }: WalletButtonProps) {
   const [balance, setBalance] = useState<number | null>(null)
   const [isLoadingBalance, setIsLoadingBalance] = useState(false)
 
-  // Fetch balance when wallet is connected
   useEffect(() => {
     if (!connected || !publicKey || !connection) {
       setBalance(null)
@@ -43,7 +42,6 @@ export function WalletButton({ connecting }: WalletButtonProps) {
 
     fetchBalance()
 
-    // Subscribe to balance changes
     const subscriptionId = connection.onAccountChange(
       publicKey,
       (accountInfo) => {
@@ -77,13 +75,11 @@ export function WalletButton({ connecting }: WalletButtonProps) {
     <div className="hidden md:block">
       {connected && publicKey ? (
         <div className="flex items-center gap-2">
-          {/* Disconnect Button */}
           <Button variant="green" glow size="md" className="hover-shake" onClick={handleWalletClick}>
             <ConnectIcon connected={true} />
             {formatWalletAddress(publicKey.toBase58())}
           </Button>
 
-          {/* Balance Display */}
           {balance !== null && (
             <div className="glass brutal-shadow px-3 py-2 rounded-lg border-2 border-white/20">
               <div className="flex items-center gap-2">

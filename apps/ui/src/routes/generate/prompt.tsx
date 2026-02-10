@@ -8,7 +8,7 @@ import { CustomizationOptions } from '@/components/generate/CustomizationOptions
 import type { CoinVibe } from '@memedime/contracts'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
 import { useGenerateCoin } from '@/routes/coins/-queries.ts'
-import { useWalletContext } from '@/wallet/WalletContext'
+import { useWalletContext } from '@/features/wallet/components/WalletContext'
 
 export const Route = createFileRoute('/generate/prompt')({
   component: PromptModePage,
@@ -30,7 +30,6 @@ function PromptModePage() {
     },
   })
 
-  // Show result when API succeeds
   useEffect(() => {
     if (generateMutation.isSuccess && generateMutation.data && !showResult) {
       setShowResult(true)
@@ -50,7 +49,6 @@ function PromptModePage() {
 
     setShowResult(false)
 
-    // Trigger coin generation with prompt
     generateMutation.mutate({
       mode: 'prompt',
       prompt: prompt.trim(),
@@ -69,7 +67,6 @@ function PromptModePage() {
     setPrompt('')
   }
 
-  // Coin data from mutation for SuccessPreview
   const generatedCoin = generateMutation.data
     ? {
         name: generateMutation.data.name,
@@ -83,7 +80,6 @@ function PromptModePage() {
 
   return (
     <>
-      {/* Show Success Preview after generation */}
       {showResult && generatedCoin ? (
         <div className="py-12">
           <SuccessPreview
@@ -94,7 +90,6 @@ function PromptModePage() {
         </div>
       ) : (
         <>
-          {/* Generation Area - Prompt Input */}
           <div className="flex flex-col items-center gap-8 mb-8">
             <PromptMode
               value={prompt}
@@ -104,7 +99,6 @@ function PromptModePage() {
             />
           </div>
 
-          {/* Customization Options */}
           <div className="max-w-3xl mx-auto mb-8">
             <CustomizationOptions
               vibe={vibe}
@@ -114,7 +108,6 @@ function PromptModePage() {
             />
           </div>
 
-          {/* Generate Button */}
           <div className="max-w-3xl mx-auto text-center">
             <Button
               variant="cyan"
@@ -135,7 +128,6 @@ function PromptModePage() {
         </>
       )}
 
-      {/* Toast Notifications */}
       <Toast
         show={toastState.show}
         message={toastState.message}

@@ -1,4 +1,4 @@
-import { useWalletContext } from '@/wallet/WalletContext'
+import { useWalletContext } from '@/features/wallet/components/WalletContext'
 import { useToast } from '@/components/ui'
 
 /**

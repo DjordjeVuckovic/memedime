@@ -10,9 +10,8 @@ import {
 } from '@tanstack/react-query'
 import * as api from '@/api/api-client.ts'
 import type { Mode, SortBy } from '@memedime/contracts'
-import { useWalletContext } from '@/wallet'
+import { useWalletContext } from '@/features/wallet/components/WalletContext'
 
-// Query Keys
 const coinKeys = {
   all: ['coins'] as const,
   lists: () => [...coinKeys.all, 'list'] as const,
@@ -21,27 +20,15 @@ const coinKeys = {
   detail: (id: number) => [...coinKeys.details(), id] as const,
 }
 
-// Queries
 export const useCoin = (id: number, options?: Omit<UseQueryOptions<api.CoinResp>, 'queryKey' | 'queryFn'>) => {
   return useQuery({
     queryKey: coinKeys.detail(id),
     queryFn: () => api.getCoinById(id),
-    placeholderData: (previousData) => previousData, // Keep previous data while fetching
+    placeholderData: (previousData) => previousData,
     ...options,
   })
 }
 
-/**
- * Infinite query hook for searching coins with pagination
- *
- * Returns InfiniteData<api.CoinsResp> with pages array
- * Type parameters:
- * - TQueryFnData: api.CoinsResp (what the API returns)
- * - TError: Error
- * - TData: InfiniteData<api.CoinsResp, string | undefined> (transformed data with pages)
- * - TQueryKey: ReturnType<typeof coinKeys.list>
- * - TPageParam: string | undefined (cursor)
- */
 export const useSearchCoins = (
   query: string,
   mode?: Mode,
@@ -49,16 +36,15 @@ export const useSearchCoins = (
   limit: number = 50,
   options?: Omit<
     UseInfiniteQueryOptions<
-      api.CoinsResp, // TQueryFnData
-      Error, // TError
-      InfiniteData<api.CoinsResp, string | undefined>, // TData
-      ReturnType<typeof coinKeys.list>, // TQueryKey
-      string | undefined // TPageParam
+      api.CoinsResp,
+      Error,
+      InfiniteData<api.CoinsResp, string | undefined>,
+      ReturnType<typeof coinKeys.list>,
+      string | undefined
     >,
     'queryKey' | 'queryFn' | 'getNextPageParam' | 'initialPageParam'
   >,
 ) => {
-  // Sanitize search query
   const searchQuery = query?.trim() || ''
 
   return useInfiniteQuery({
@@ -66,12 +52,11 @@ export const useSearchCoins = (
     queryFn: ({ pageParam }) => api.searchCoins(searchQuery, mode, sortBy, limit, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
-    placeholderData: (previousData) => previousData, // Keep previous data while fetching
+    placeholderData: (previousData) => previousData,
     ...options,
   })
 }
 
-// Mutations
 export const useGenerateCoin = (
   options?: Omit<
     UseMutationOptions<api.CoinResp, Error, api.RandomCoinReq | api.PromptCoinReq | api.SocialCoinReq>,
@@ -87,9 +72,7 @@ export const useGenerateCoin = (
       walletAddress: wallet.address || undefined,
     }),
     onSuccess: (data) => {
-      // Invalidate and refetch coins list
       queryClient.invalidateQueries({ queryKey: coinKeys.lists() }).then()
-      // Set the coin detail in cache
       queryClient.setQueryData(coinKeys.detail(data.id), data)
     },
     ...options,

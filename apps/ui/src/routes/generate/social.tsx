@@ -8,7 +8,7 @@ import { CustomizationOptions } from '@/components/generate/CustomizationOptions
 import type { CoinVibe } from '@memedime/contracts'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
 import { useGenerateCoin } from '@/routes/coins/-queries.ts'
-import { useWalletContext } from '@/wallet/WalletContext'
+import { useWalletContext } from '@/features/wallet/components/WalletContext'
 
 export const Route = createFileRoute('/generate/social')({
   component: SocialModePage,
@@ -32,16 +32,14 @@ function SocialModePage() {
     },
   })
 
-  // Show result when API succeeds
   useEffect(() => {
     if (generateMutation.isSuccess && generateMutation.data && !showResult) {
       setShowResult(true)
     }
   }, [generateMutation.isSuccess, generateMutation.data, showResult])
 
-  // Validation
   const validateUrl = (url: string) => {
-    if (!url) return true // URL is optional
+    if (!url) return true
     try {
       const urlObj = new URL(url)
       return urlObj.protocol === 'http:' || urlObj.protocol === 'https:'
@@ -52,7 +50,6 @@ function SocialModePage() {
   const isUrlValid = validateUrl(socialUrl)
 
   const handleGenerate = () => {
-    // Auth guard - check if wallet is connected
     if (!connected) {
       showToast('PLEASE CONNECT YOUR WALLET FIRST!', 'error')
       return
@@ -67,13 +64,10 @@ function SocialModePage() {
       return
     }
 
-    // Reset states
     setShowResult(false)
 
-    // Construct prompt from context if provided
     let prompt = context.trim() || undefined
 
-    // Trigger coin generation with social content
     generateMutation.mutate({
       mode: 'social',
       postUrl: socialUrl.trim() || undefined,
@@ -96,7 +90,6 @@ function SocialModePage() {
     setContext('')
   }
 
-  // Coin data from mutation for SuccessPreview
   const generatedCoin = generateMutation.data
     ? {
         name: generateMutation.data.name,
@@ -111,7 +104,6 @@ function SocialModePage() {
 
   return (
     <>
-      {/* Show Success Preview after generation */}
       {showResult && generatedCoin ? (
         <div className="py-12">
           <SuccessPreview
@@ -122,7 +114,6 @@ function SocialModePage() {
         </div>
       ) : (
         <>
-          {/* Generation Area - Social Input */}
           <div className="flex flex-col items-center gap-8 mb-8">
             <SocialMode
               url={socialUrl}
@@ -135,7 +126,6 @@ function SocialModePage() {
             />
           </div>
 
-          {/* Customization Options */}
           <div className="max-w-3xl mx-auto mb-8">
             <CustomizationOptions
               vibe={vibe}
@@ -147,7 +137,6 @@ function SocialModePage() {
             />
           </div>
 
-          {/* Generate Button */}
           <div className="max-w-3xl mx-auto text-center">
             <Button
               variant="primary"
@@ -168,7 +157,6 @@ function SocialModePage() {
         </>
       )}
 
-      {/* Toast Notifications */}
       <Toast
         show={toastState.show}
         message={toastState.message}

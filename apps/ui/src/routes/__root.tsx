@@ -4,7 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import Navbar from '../components/Navbar'
 import { Footer } from '@/components/Footer'
-import { WalletProvider } from '@/wallet/WalletProvider'
+import { WalletProvider } from '@/features/wallet/components/WalletProvider'
 import { ErrorPage } from '@/components/ErrorPage'
 
 function RootComponent() {

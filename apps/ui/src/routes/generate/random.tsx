@@ -8,7 +8,7 @@ import { CustomizationOptions } from '@/components/generate/CustomizationOptions
 import type { CoinVibe } from '@memedime/contracts'
 import { SuccessPreview } from '@/components/generate/SuccessPreview'
 import { useGenerateCoin } from '@/routes/coins/-queries.ts'
-import { useWalletContext } from '@/wallet/WalletContext'
+import { useWalletContext } from '@/features/wallet/components/WalletContext'
 
 const PREVIEW_DELAY = 1_500
 
@@ -37,11 +37,9 @@ function RandomModePage() {
     },
   })
 
-  // When both animation completes AND API returns, update slot machine and show result
   useEffect(() => {
     let timeout: NodeJS.Timeout
     if (animationComplete && generateMutation.isSuccess && !showResult) {
-      // Update slot machine to display backend-generated combos
       if (generateMutation.data.combos && slotMachineRef.current) {
         slotMachineRef.current.setFinalResult(generateMutation.data.combos)
       }
@@ -61,7 +59,6 @@ function RandomModePage() {
   }
 
   const handleGenerate = () => {
-    // Auth guard - check if wallet is connected
     if (!connected) {
       showToast('PLEASE CONNECT YOUR WALLET FIRST!', 'error')
       return
@@ -72,7 +69,6 @@ function RandomModePage() {
     setShowResult(false)
     generateMutation.reset()
 
-    // Start slot machine animation
     slotMachineRef.current?.spin()
 
     generateMutation.mutate({
@@ -93,7 +89,6 @@ function RandomModePage() {
     generateMutation.reset()
   }
 
-  // Coin data from mutation for SuccessPreview
   const generatedCoin = generateMutation.data
     ? {
         name: generateMutation.data.name,
@@ -105,7 +100,6 @@ function RandomModePage() {
 
   return (
     <>
-      {/* Show Success Preview after generation */}
       {showResult && generatedCoin ? (
         <div className="py-12">
           <SuccessPreview
@@ -116,12 +110,10 @@ function RandomModePage() {
         </div>
       ) : (
         <>
-          {/* Generation Area - Slot Machine */}
           <div className="flex flex-col items-center gap-8 mb-8">
             <SlotMachine ref={slotMachineRef} onSpin={handleRandomComplete} />
           </div>
 
-          {/* Customization Options */}
           <div className="max-w-3xl mx-auto mb-8">
             <CustomizationOptions
               vibe={vibe}
@@ -133,7 +125,6 @@ function RandomModePage() {
             />
           </div>
 
-          {/* Generate Button */}
           <div className="max-w-3xl mx-auto text-center">
             <Button
               variant="gold"
@@ -156,7 +147,6 @@ function RandomModePage() {
         </>
       )}
 
-      {/* Toast Notifications */}
       <Toast show={toastState.show} message={toastState.message} variant={toastState.variant} onClose={hideToast} />
     </>
   )
