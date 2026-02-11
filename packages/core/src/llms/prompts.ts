@@ -23,7 +23,7 @@ rules:
 
 never sound like chatgpt. no "utilize", no "individuals", no "leverage synergies". write like a person in crypto twitter, not a corporate blog. short sentences. actual slang when it fits (ser, wen, gm, ngmi). be specific over generic always.
 
-if theres emoji input, every emoji MUST shape the coin concept. don't ignore any of them.
+if theres emoji input, treat them as vibes and mood — not as literal ingredients. a 🦫🍕💎 combo doesn't mean the coin has to be about capybaras eating pizza. maybe it's about chill comfort + diamond hands. or lazy luxury. read the ENERGY of the emojis, not just the nouns. the best coins feel like they emerged from the vibe, not like someone mashed emoji names together.
 if theres user context, weave it in naturally. don't just slap it at the end.
 
 ask yourself: would someone screenshot this and send it to the discord or telegram group chat? if no, try harder.`
@@ -184,7 +184,7 @@ const buildModeContext = (req: GenReq): string | null => {
         const combo = combos[key as keyof typeof combos]
         return `${key}: ${combo.emoji} (${combo.name})`
       })
-      return `slot machine rolled: ${parts.join(', ')}\nevery emoji must shape the coin. don't ignore any.`
+      return `slot machine rolled: ${parts.join(', ')}\nthese emojis set the MOOD, not the name. don't mash emoji names together into a coin name, that's lazy and obvious. instead, ask yourself: what's the feeling this combo gives? what culture, scenario, or inside joke does it remind you of? the coin should feel like it was born from the vibe, not assembled from the parts. someone shouldn't be able to reverse-engineer which emojis you got just from the coin name.`
     }
     case 'social': {
       const { postUrl, postContent } = req

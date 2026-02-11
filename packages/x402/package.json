@@ -1,8 +1,11 @@
 {
-  "name": "x402-server",
+  "name": "@memedime/x402",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
